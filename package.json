@@ -1,0 +1,19 @@
+{
+  "name": "v-no-script",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "install-browser": "node node_modules/puppeteer-core/install.js",
+    "prerender-queue": "node dist/prerender-queue.js",
+    "prerender-recur": "node dist/prerender-recur.js"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "puppeteer-core": "^5.5.0"
+  },
+  "devDependencies": {
+    "@types/puppeteer-core": "^2.0.0",
+    "typescript": "^4.1.2"
+  }
+}
