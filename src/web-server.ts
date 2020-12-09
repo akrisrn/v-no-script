@@ -1,5 +1,5 @@
 import express from 'express';
-import { homePath, port, publicPath, sitePath } from './vars';
+import { homePath, port, publicPath, sitePath } from '@/vars';
 
 if (!sitePath) {
   console.error('error:', 'process.env.SITE_PATH is empty');

@@ -5,7 +5,12 @@
     "esModuleInterop": true,
     "strict": true,
     "removeComments": true,
-    "outDir": "dist"
+    "baseUrl": "src",
+    "paths": {
+      "@/*": [
+        "*"
+      ]
+    }
   },
   "include": [
     "src/**/*"
