@@ -1,25 +1,12 @@
 import path from 'path';
 import fs from 'fs';
-import dotenv from 'dotenv';
 import puppeteer, { Browser, Page } from 'puppeteer-core';
-
-dotenv.config();
-
-const outDir = process.env.OUT_DIR || 'out';
-const host = process.env.HOST;
-const publicPath = process.env.PUBLIC_PATH || '/';
-const indexPath = process.env.INDEX_PATH || 'hash/index.html';
-const indexFile = process.env.INDEX_FILE || '/index.md';
+import { assetsPath, homePath, host, indexFile, indexUrl, outDir, publicPath } from './vars';
 
 if (!host) {
   console.error('error:', 'process.env.HOST is empty');
   process.exit(1);
 }
-
-const shortIndexPath = indexPath.endsWith('index.html') ? indexPath.replace(/index\.html$/, '') : indexPath;
-const homePath = publicPath + shortIndexPath;
-const indexUrl = host + homePath;
-const assetsPath = `${publicPath}assets/`;
 
 let count = 0;
 
