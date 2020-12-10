@@ -3,11 +3,6 @@ import fs from 'fs';
 import puppeteer, { Browser, Page } from 'puppeteer-core';
 import { assetsPath, homePath, host, indexFile, indexUrl, outDir, publicPath } from '@/vars';
 
-if (!host) {
-  console.error('error:', 'process.env.HOST is empty');
-  process.exit(1);
-}
-
 let count = 0;
 
 export function writeFile(filePath: string, html: string) {
