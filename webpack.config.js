@@ -13,6 +13,7 @@ module.exports = {
     'prerender-queue': './prerender-queue.ts',
     'prerender-recur': './prerender-recur.ts',
     'web-server': './web-server.ts',
+    'clean-html': './clean-html.ts',
   },
   plugins: [
     new CleanWebpackPlugin(),

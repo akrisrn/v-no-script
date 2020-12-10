@@ -8,7 +8,8 @@
     "install-browser": "node node_modules/puppeteer-core/install.js",
     "prerender-queue": "node dist/prerender-queue.js",
     "prerender-recur": "node dist/prerender-recur.js",
-    "web-server": "node dist/web-server.js"
+    "web-server": "node dist/web-server.js",
+    "clean-html": "node dist/clean-html.js"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
