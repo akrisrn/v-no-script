@@ -1,10 +1,8 @@
 import express from 'express';
 import { homePath, localhost, port, publicPath, sitePath } from '@/vars';
+import { checkSitePath } from '@/utils';
 
-if (!sitePath) {
-  console.error('error:', 'process.env.SITE_PATH is empty');
-  process.exit(1);
-}
+checkSitePath();
 
 const app = express();
 app.use(publicPath, express.static(sitePath));

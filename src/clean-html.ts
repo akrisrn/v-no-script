@@ -1,11 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import { assetsDir, indexPath, sitePath } from '@/vars';
+import { checkSitePath } from '@/utils';
 
-if (!sitePath) {
-  console.error('error:', 'process.env.SITE_PATH is empty');
-  process.exit(1);
-}
+checkSitePath();
 
 const excludeDirs = ['.git', '.github', assetsDir];
 
