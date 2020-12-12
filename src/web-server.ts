@@ -1,6 +1,6 @@
 import express from 'express';
-import { homePath, localhost, port, publicPath, sitePath } from '@/vars';
 import { checkSitePath } from '@/utils';
+import { homePath, localhost, port, publicPath, sitePath } from '@/utils/vars';
 
 checkSitePath();
 

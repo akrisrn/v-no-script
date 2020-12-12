@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { assetsDir, indexPath, sitePath } from '@/vars';
 import { checkSitePath } from '@/utils';
+import { assetsDir, indexPath, sitePath } from '@/utils/vars';
 
 checkSitePath();
 

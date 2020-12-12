@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import puppeteer, { Browser, Page } from 'puppeteer-core';
-import { assetsPath, homePath, host, indexFile, indexUrl, outDir, publicPath } from '@/vars';
+import { assetsPath, homePath, host, indexFile, indexUrl, outDir, publicPath } from '@/utils/vars';
 
 let count = 0;
 

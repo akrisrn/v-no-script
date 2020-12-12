@@ -1,4 +1,4 @@
-import { sitePath } from '@/vars';
+import { sitePath } from '@/utils/vars';
 
 export function checkSitePath() {
   if (!sitePath) {

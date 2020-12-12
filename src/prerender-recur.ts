@@ -1,5 +1,5 @@
 import { Browser } from 'puppeteer-core';
-import { beginTo, loadPage, newPage, writeFile } from '@/prerender-common';
+import { beginTo, loadPage, newPage, writeFile } from '@/utils/prerender-common';
 
 const loadedPaths: string[] = [];
 
