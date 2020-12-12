@@ -9,7 +9,8 @@
     "prerender-queue": "node dist/prerender-queue.js",
     "prerender-recur": "node dist/prerender-recur.js",
     "web-server": "node dist/web-server.js",
-    "clean-html": "node dist/clean-html.js"
+    "clean-html": "node dist/clean-html.js",
+    "update-cache-key": "node dist/update-cache-key.js"
   },
   "dependencies": {
     "dotenv": "^8.2.0",

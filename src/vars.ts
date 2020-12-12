@@ -20,5 +20,7 @@ if (indexPath === 'index.html') {
 
 export const homePath = publicPath + shortIndexPath;
 export const indexUrl = host + homePath;
-export const assetsDir = 'assets'
+export const assetsDir = 'assets';
 export const assetsPath = `${publicPath}${assetsDir}/`;
+export const configPath = `${assetsDir}/config.js`;
+export const publicConfigPath = publicPath + configPath;

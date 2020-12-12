@@ -14,6 +14,7 @@ module.exports = {
     'prerender-recur': './prerender-recur.ts',
     'web-server': './web-server.ts',
     'clean-html': './clean-html.ts',
+    'update-cache-key': './update-cache-key.ts',
   },
   plugins: [
     new CleanWebpackPlugin(),
