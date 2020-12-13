@@ -15,6 +15,7 @@ module.exports = {
     'web-server': './web-server.ts',
     'clean-html': './clean-html.ts',
     'update-cache-key': './update-cache-key.ts',
+    'update-date': './update-date.ts',
   },
   plugins: [
     new CleanWebpackPlugin(),

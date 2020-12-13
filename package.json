@@ -10,7 +10,8 @@
     "prerender-recur": "node dist/prerender-recur.js",
     "web-server": "node dist/web-server.js",
     "clean-html": "node dist/clean-html.js",
-    "update-cache-key": "node dist/update-cache-key.js"
+    "update-cache-key": "node dist/update-cache-key.js",
+    "update-date": "node dist/update-date.js"
   },
   "dependencies": {
     "cross-spawn": "^7.0.3",

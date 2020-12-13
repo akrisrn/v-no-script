@@ -10,6 +10,9 @@ export const host = process.env.HOST || localhost;
 export const publicPath = process.env.PUBLIC_PATH || '/';
 export const indexPath = process.env.INDEX_PATH || '-/index.html';
 export const indexFile = process.env.INDEX_FILE || '/index.md';
+export const excludeUsername = process.env.EXCLUDE_USERNAME ? process.env.EXCLUDE_USERNAME.split(',').map(username => {
+  return username.trim();
+}).filter(username => username) : [];
 
 let shortIndexPath = indexPath;
 if (indexPath === 'index.html') {
