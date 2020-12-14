@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import puppeteer, { Browser, Page } from 'puppeteer-core';
-import { assetsPath, homePath, host, indexFile, indexUrl, outDir, publicPath } from '@/utils/vars';
+import { assetsPath, homePath, host, indexFile, indexUrl, outDir, publicConfigPath, publicPath } from '@/utils/vars';
 
 let count = 0;
 
@@ -48,7 +48,7 @@ export async function loadPage(page: Page, path: string) {
   await page.waitForSelector('.rendering', {
     hidden: true,
   });
-  return page.evaluate((publicPath: string, homePath: string) => {
+  return page.evaluate((publicPath: string, homePath: string, publicConfigPath: string) => {
     let html = '';
     const paths: string[] = [];
     if (!document.querySelector('main.error')) {
@@ -72,11 +72,16 @@ export async function loadPage(page: Page, path: string) {
           a.href = publicPath;
         });
       }
+      document.querySelectorAll('.custom').forEach(element => {
+        element.remove();
+      });
+      const configScript = document.querySelector(`script[src^="${publicConfigPath}"]`)!;
+      configScript.setAttribute('src', publicConfigPath);
       document.body.id = 'prerender';
       html = document.documentElement.outerHTML;
     }
     return { html, paths };
-  }, publicPath, homePath);
+  }, publicPath, homePath, publicConfigPath);
 }
 
 export async function beginTo(loadPages: (browser: Browser, paths: string[]) => Promise<void>) {
