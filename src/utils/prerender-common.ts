@@ -72,13 +72,31 @@ export async function loadPage(page: Page, path: string) {
           a.href = publicPath;
         });
       }
-      document.querySelectorAll('.custom').forEach(element => {
+      document.querySelectorAll([
+        'a > svg',
+        '#top > div > select',
+        '#backlinks > .icon',
+        '.heading-tag',
+        '.heading-link',
+        '.custom',
+      ].join()).forEach(element => {
+        element.remove();
+      });
+      document.querySelectorAll('.lds-ellipsis').forEach(element => {
+        const nextElement = element.nextElementSibling!;
+        nextElement.classList.remove('hidden');
+        if (nextElement.classList.length === 0) {
+          nextElement.removeAttribute('class');
+        }
         element.remove();
       });
       const configScript = document.querySelector(`script[src^="${publicConfigPath}"]`)!;
       configScript.setAttribute('src', publicConfigPath);
       document.body.id = 'prerender';
-      html = document.documentElement.outerHTML;
+      const documentElement = document.documentElement;
+      documentElement.removeAttribute('style');
+      html = documentElement.outerHTML;
+      html = html.replaceAll('<!---->', '').replaceAll(/(>)(?:\r?\n)+(<)/g, '$1$2');
     }
     return { html, paths };
   }, publicPath, homePath, publicConfigPath);
