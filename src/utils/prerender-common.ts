@@ -1,7 +1,17 @@
 import path from 'path';
 import fs from 'fs';
 import puppeteer, { Browser, Page } from 'puppeteer-core';
-import { assetsPath, homePath, host, indexFile, indexUrl, outDir, publicConfigPath, publicPath } from '@/utils/vars';
+import {
+  assetsPath,
+  homePath,
+  host,
+  indexFile,
+  indexUrl,
+  outDir,
+  publicCacheKeyPath,
+  publicConfigPath,
+  publicPath,
+} from '@/utils/vars';
 
 let count = 0;
 
@@ -48,7 +58,7 @@ export async function loadPage(page: Page, path: string) {
   await page.waitForSelector('.rendering', {
     hidden: true,
   });
-  return page.evaluate((publicPath: string, homePath: string, publicConfigPath: string) => {
+  return page.evaluate((publicPath: string, homePath: string, publicConfigPath: string, publicCacheKeyPath: string) => {
     let html = '';
     const paths: string[] = [];
     if (!document.querySelector('main.error')) {
@@ -90,16 +100,21 @@ export async function loadPage(page: Page, path: string) {
         }
         element.remove();
       });
+      const cacheKeyScript = document.querySelector(`script[src^="${publicCacheKeyPath}"]`);
+      if (cacheKeyScript) {
+        cacheKeyScript.setAttribute('src', publicCacheKeyPath);
+      }
       const configScript = document.querySelector(`script[src^="${publicConfigPath}"]`)!;
       configScript.setAttribute('src', publicConfigPath);
       document.body.id = 'prerender';
       const documentElement = document.documentElement;
       documentElement.removeAttribute('style');
-      html = documentElement.outerHTML;
+      // noinspection HtmlRequiredLangAttribute
+      html = documentElement.outerHTML.replace('<html style="">', '<html>');
       html = html.replaceAll('<!---->', '').replaceAll(/(>)(?:\r?\n)+(<)/g, '$1$2');
     }
     return { html, paths };
-  }, publicPath, homePath, publicConfigPath);
+  }, publicPath, homePath, publicConfigPath, publicCacheKeyPath);
 }
 
 export async function beginTo(loadPages: (browser: Browser, paths: string[]) => Promise<void>) {
