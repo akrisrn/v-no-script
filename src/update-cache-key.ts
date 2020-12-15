@@ -1,18 +1,48 @@
 import fs from 'fs';
 import path from 'path';
-import { checkSitePath } from '@/utils';
-import { configPath, indexPath, publicConfigPath, sitePath } from '@/utils/vars';
+import crypto, { BinaryLike } from 'crypto';
+import { checkSitePath, getFiles } from '@/utils';
+import { cacheKeyPath, configPath, indexPath, publicCacheKeyPath, publicConfigPath, sitePath } from '@/utils/vars';
 
 checkSitePath();
 
-const cacheKey = `v=${new Date().getTime()}`;
+function getDigest(data: BinaryLike) {
+  const hash = crypto.createHash('sha256');
+  hash.update(data);
+  return hash.digest('hex').substr(0, 8);
+}
 
-const absoluteConfigPath = path.join(sitePath, configPath);
-let configData = fs.readFileSync(absoluteConfigPath).toString();
-configData = configData.replace(/(\scacheKey:\s*["']).*?(["'])/, `$1${cacheKey}$2`);
-fs.writeFileSync(absoluteConfigPath, configData);
+function getScriptRegExp(src: string) {
+  return new RegExp(`(<script\\s+src=["']${src}).*?(["']>)`);
+}
 
-const absoluteIndexPath = path.join(sitePath, indexPath);
-let indexData = fs.readFileSync(absoluteIndexPath).toString();
-indexData = indexData.replace(new RegExp(`(<script\\s+src=["']${publicConfigPath}).*?(["']>)`), `$1?${cacheKey}$2`);
-fs.writeFileSync(absoluteIndexPath, indexData);
+const digestDict: { [index: string]: string } = {};
+
+(async () => {
+  for await (const filePath of getFiles(sitePath)) {
+    if (!/\.(md|js|css)$/.test(filePath)) {
+      continue;
+    }
+    const path = filePath.substr(sitePath.length).replace(/\\/g, '/');
+    digestDict[path] = getDigest(fs.readFileSync(filePath));
+  }
+  const cacheKeyData = `cacheKey = ${JSON.stringify(digestDict)}`;
+  const cacheKeyDigest = getDigest(cacheKeyData);
+  fs.writeFileSync(path.join(sitePath, cacheKeyPath), cacheKeyData);
+
+  const absoluteIndexPath = path.join(sitePath, indexPath);
+  let indexData = fs.readFileSync(absoluteIndexPath).toString();
+  const configDigest = getDigest(fs.readFileSync(path.join(sitePath, configPath)));
+  const configRegExp = getScriptRegExp(publicConfigPath);
+  indexData = indexData.replace(configRegExp, `$1?${configDigest}$2`);
+  const cacheKeyRegExp = getScriptRegExp(publicCacheKeyPath);
+  if (cacheKeyRegExp.test(indexData)) {
+    indexData = indexData.replace(cacheKeyRegExp, `$1?${cacheKeyDigest}$2`);
+  } else {
+    const index = indexData.match(configRegExp)!.index!;
+    const partA = indexData.substring(0, index);
+    const partB = indexData.substring(index);
+    indexData = `${partA}<script src="${publicCacheKeyPath}?${cacheKeyDigest}"></script>${partB}`;
+  }
+  fs.writeFileSync(absoluteIndexPath, indexData);
+})();

@@ -27,3 +27,5 @@ export const assetsDir = 'assets';
 export const assetsPath = `${publicPath}${assetsDir}/`;
 export const configPath = `${assetsDir}/config.js`;
 export const publicConfigPath = publicPath + configPath;
+export const cacheKeyPath = `${assetsDir}/cacheKey.js`;
+export const publicCacheKeyPath = publicPath + cacheKeyPath;
