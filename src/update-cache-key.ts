@@ -26,7 +26,8 @@ const digestDict: { [index: string]: string } = {};
     const path = filePath.substr(sitePath.length).replace(/\\/g, '/');
     digestDict[path] = getDigest(fs.readFileSync(filePath));
   }
-  const cacheKeyData = `cacheKey = ${JSON.stringify(digestDict)}`;
+  // [The cost of parsing JSON](https://v8.dev/blog/cost-of-javascript-2019#json)
+  const cacheKeyData = `cacheKey = JSON.parse('${JSON.stringify(digestDict)}')`;
   const cacheKeyDigest = getDigest(cacheKeyData);
   fs.writeFileSync(path.join(sitePath, cacheKeyPath), cacheKeyData);
 
