@@ -13,12 +13,12 @@ async function loadPages(browser: Browser, paths: string[]) {
     promises.push(newPage(browser).then(async page => {
       const { html, paths } = await loadPage(page, path);
       await page.close();
-      if (html) {
-        writeFile(path.replace(/\.md$/, '.html'), html);
-        await loadPages(browser, paths);
-      } else {
+      if (!html) {
         console.error('error:', path);
+        return;
       }
+      writeFile(path.replace(/\.md$/, '.html'), html);
+      await loadPages(browser, paths);
     }));
   }
   await Promise.all(promises);

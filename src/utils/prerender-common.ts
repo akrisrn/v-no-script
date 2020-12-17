@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import puppeteer, { Browser, Page } from 'puppeteer-core';
+import puppeteer, { Browser, Page, Request } from 'puppeteer-core';
 import {
   assetsPath,
   homePath,
@@ -28,20 +28,24 @@ export function writeFile(filePath: string, html: string) {
   count++;
 }
 
+function checkRequest(request: Request) {
+  const resourceType = request.resourceType();
+  if (['document', 'xhr'].includes(resourceType)) {
+    return true;
+  }
+  if (!['script', 'stylesheet'].includes(resourceType)) {
+    return false;
+  }
+  const url = new URL(request.url());
+  return url.origin === host && url.pathname.startsWith(assetsPath);
+}
+
 export async function newPage(browser: Browser) {
   const page = await browser.newPage();
   await page.setRequestInterception(true);
   page.on('request', request => {
-    const resourceType = request.resourceType();
-    if (['document', 'xhr'].includes(resourceType)) {
+    if (checkRequest(request)) {
       request.continue();
-    } else if (['script', 'stylesheet'].includes(resourceType)) {
-      const url = new URL(request.url());
-      if (url.origin === host && url.pathname.startsWith(assetsPath)) {
-        request.continue();
-      } else {
-        request.abort();
-      }
     } else {
       request.abort();
     }
@@ -61,58 +65,59 @@ export async function loadPage(page: Page, path: string) {
   return page.evaluate((publicPath: string, homePath: string, publicConfigPath: string, publicCacheKeyPath: string) => {
     let html = '';
     const paths: string[] = [];
-    if (!document.querySelector('main.error')) {
-      document.querySelectorAll<HTMLLinkElement>('a[href^="#/"]').forEach(a => {
-        let href = a.getAttribute('href')!;
-        const indexOf = href.indexOf('?');
-        let query = '';
-        if (indexOf >= 0) {
-          query = href.substr(indexOf);
-          href = href.substr(0, indexOf);
-        }
-        let path = href.substr(1);
-        if (path.endsWith('/')) {
-          path += 'index.md';
-        }
-        a.href = publicPath + path.replace(/\.md$/, '.html').substr(1) + query;
-        paths.push(path);
-      });
-      if (homePath !== publicPath) {
-        document.querySelectorAll<HTMLLinkElement>(`a[href="${homePath}"]`).forEach(a => {
-          a.href = publicPath;
-        });
-      }
-      document.querySelectorAll([
-        'a > svg',
-        '#top > div > select',
-        '#backlinks > .icon',
-        '.heading-tag',
-        '.heading-link',
-        '.custom',
-      ].join()).forEach(element => {
-        element.remove();
-      });
-      document.querySelectorAll('.lds-ellipsis').forEach(element => {
-        const nextElement = element.nextElementSibling!;
-        nextElement.classList.remove('hidden');
-        if (nextElement.classList.length === 0) {
-          nextElement.removeAttribute('class');
-        }
-        element.remove();
-      });
-      const cacheKeyScript = document.querySelector(`script[src^="${publicCacheKeyPath}"]`);
-      if (cacheKeyScript) {
-        cacheKeyScript.setAttribute('src', publicCacheKeyPath);
-      }
-      const configScript = document.querySelector(`script[src^="${publicConfigPath}"]`)!;
-      configScript.setAttribute('src', publicConfigPath);
-      document.body.id = 'prerender';
-      const documentElement = document.documentElement;
-      documentElement.removeAttribute('style');
-      // noinspection HtmlRequiredLangAttribute
-      html = documentElement.outerHTML.replace('<html style="">', '<html>');
-      html = html.replaceAll('<!---->', '').replaceAll(/(>)(?:\r?\n)+(<)/g, '$1$2');
+    if (document.querySelector('main.error')) {
+      return { html, paths };
     }
+    document.querySelectorAll<HTMLLinkElement>('a[href^="#/"]').forEach(a => {
+      let href = a.getAttribute('href')!;
+      const indexOf = href.indexOf('?');
+      let query = '';
+      if (indexOf >= 0) {
+        query = href.substr(indexOf);
+        href = href.substr(0, indexOf);
+      }
+      let path = href.substr(1);
+      if (path.endsWith('/')) {
+        path += 'index.md';
+      }
+      a.href = publicPath + path.replace(/\.md$/, '.html').substr(1) + query;
+      paths.push(path);
+    });
+    if (homePath !== publicPath) {
+      document.querySelectorAll<HTMLLinkElement>(`a[href="${homePath}"]`).forEach(a => {
+        a.href = publicPath;
+      });
+    }
+    document.querySelectorAll([
+      'a > svg',
+      '#top > div > select',
+      '#backlinks > .icon',
+      '.heading-tag',
+      '.heading-link',
+      '.custom',
+    ].join()).forEach(element => {
+      element.remove();
+    });
+    document.querySelectorAll('.lds-ellipsis').forEach(element => {
+      const nextElement = element.nextElementSibling!;
+      nextElement.classList.remove('hidden');
+      if (nextElement.classList.length === 0) {
+        nextElement.removeAttribute('class');
+      }
+      element.remove();
+    });
+    const cacheKeyScript = document.querySelector(`script[src^="${publicCacheKeyPath}"]`);
+    if (cacheKeyScript) {
+      cacheKeyScript.setAttribute('src', publicCacheKeyPath);
+    }
+    const configScript = document.querySelector(`script[src^="${publicConfigPath}"]`)!;
+    configScript.setAttribute('src', publicConfigPath);
+    document.body.id = 'prerender';
+    const documentElement = document.documentElement;
+    documentElement.removeAttribute('style');
+    // noinspection HtmlRequiredLangAttribute
+    html = documentElement.outerHTML.replace('<html style="">', '<html>');
+    html = html.replaceAll('<!---->', '').replaceAll(/(>)(?:\r?\n)+(<)/g, '$1$2');
     return { html, paths };
   }, publicPath, homePath, publicConfigPath, publicCacheKeyPath);
 }

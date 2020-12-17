@@ -10,16 +10,17 @@ async function loadPages(browser: Browser, paths: string[]) {
   while (path) {
     loadedPaths.push(path);
     const { html, paths } = await loadPage(page, path);
-    if (html) {
-      writeFile(path.replace(/\.md$/, '.html'), html);
-      paths.forEach(path => {
-        if (!loadedPaths.includes(path) && !queue.includes(path)) {
-          queue.push(path);
-        }
-      });
-    } else {
+    if (!html) {
       console.error('error:', path);
+      path = queue.shift();
+      continue;
     }
+    writeFile(path.replace(/\.md$/, '.html'), html);
+    paths.forEach(path => {
+      if (!loadedPaths.includes(path) && !queue.includes(path)) {
+        queue.push(path);
+      }
+    });
     path = queue.shift();
   }
   await page.close();
