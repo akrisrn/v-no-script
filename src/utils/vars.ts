@@ -9,6 +9,7 @@ export const localhost = `http://localhost${port !== 80 ? `:${port}` : ''}`;
 export const host = process.env.HOST || localhost;
 export const publicPath = process.env.PUBLIC_PATH || '/';
 export const indexPath = process.env.INDEX_PATH || '-/index.html';
+export const cdnUrl = process.env.CDN_URL || '';
 export const indexFile = process.env.INDEX_FILE || '/index.md';
 export const excludeUsername = process.env.EXCLUDE_USERNAME ? process.env.EXCLUDE_USERNAME.split(',').map(username => {
   return username.trim();
@@ -26,7 +27,10 @@ export const homePath = publicPath + shortIndexPath;
 export const indexUrl = host + homePath;
 export const assetsDir = 'assets';
 export const assetsPath = `${publicPath}${assetsDir}/`;
+export const cdnAssetsUrl = `${cdnUrl}${assetsDir}/`;
 export const configPath = `${assetsDir}/config.js`;
 export const publicConfigPath = publicPath + configPath;
+export const cdnConfigUrl = cdnUrl + configPath;
 export const cacheKeyPath = `${assetsDir}/cacheKey.js`;
 export const publicCacheKeyPath = publicPath + cacheKeyPath;
+export const cdnCacheKeyUrl = cdnUrl + cacheKeyPath;

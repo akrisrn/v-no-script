@@ -4,6 +4,9 @@ import crypto, { BinaryLike } from 'crypto';
 import { checkSitePath, getFiles } from '@/utils';
 import {
   cacheKeyPath,
+  cdnCacheKeyUrl,
+  cdnConfigUrl,
+  cdnUrl,
   configPath,
   indexPath,
   publicCacheKeyPath,
@@ -47,16 +50,17 @@ const digestDict: { [index: string]: string } = {};
   const absoluteIndexPath = path.join(sitePath, indexPath);
   let indexData = fs.readFileSync(absoluteIndexPath).toString();
   const configDigest = getDigest(fs.readFileSync(path.join(sitePath, configPath)));
-  const configRegExp = getScriptRegExp(publicConfigPath);
+  const configRegExp = getScriptRegExp(cdnUrl ? cdnConfigUrl : publicConfigPath);
   indexData = indexData.replace(configRegExp, `$1?${configDigest}$2`);
-  const cacheKeyRegExp = getScriptRegExp(publicCacheKeyPath);
+  const cacheKeyUrl = cdnUrl ? cdnCacheKeyUrl : publicCacheKeyPath;
+  const cacheKeyRegExp = getScriptRegExp(cacheKeyUrl);
   if (cacheKeyRegExp.test(indexData)) {
     indexData = indexData.replace(cacheKeyRegExp, `$1?${cacheKeyDigest}$2`);
   } else {
     const index = indexData.match(configRegExp)!.index!;
     const partA = indexData.substring(0, index);
     const partB = indexData.substring(index);
-    indexData = `${partA}<script src="${publicCacheKeyPath}?${cacheKeyDigest}"></script>${partB}`;
+    indexData = `${partA}<script src="${cacheKeyUrl}?${cacheKeyDigest}"></script>${partB}`;
   }
   fs.writeFileSync(absoluteIndexPath, indexData);
 })();

@@ -3,6 +3,8 @@ import fs from 'fs';
 import puppeteer, { Browser, Page, Request } from 'puppeteer-core';
 import {
   assetsPath,
+  cdnAssetsUrl,
+  cdnUrl,
   homePath,
   host,
   indexFile,
@@ -36,7 +38,11 @@ function checkRequest(request: Request) {
   if (!['script', 'stylesheet'].includes(resourceType)) {
     return false;
   }
-  const url = new URL(request.url());
+  const urlStr = request.url();
+  if (cdnUrl) {
+    return urlStr.startsWith(cdnAssetsUrl);
+  }
+  const url = new URL(urlStr);
   return url.origin === host && url.pathname.startsWith(assetsPath);
 }
 
