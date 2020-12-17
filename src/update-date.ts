@@ -73,8 +73,20 @@ type TFlags<T = [string, boolean]> = {
       start = index + match[0].length;
       match = regexp.exec(fileData);
     }
+    let noFlag = false;
+    if (start === 0) {
+      noFlag = true;
+      const match = fileData.match(/^# \s*.+?\r?\n/);
+      if (match) {
+        newData += match[0];
+        start = match[0].length;
+      }
+    }
     let lastPart = fileData.substring(start);
     const missingFlags = [''];
+    if (noFlag) {
+      missingFlags.push('');
+    }
     Object.keys(flags).forEach(flag => {
       const flagData = flags[flag];
       if (!flagData[1]) {
