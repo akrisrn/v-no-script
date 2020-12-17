@@ -2,7 +2,15 @@ import fs from 'fs';
 import path from 'path';
 import crypto, { BinaryLike } from 'crypto';
 import { checkSitePath, getFiles } from '@/utils';
-import { cacheKeyPath, configPath, indexPath, publicCacheKeyPath, publicConfigPath, sitePath } from '@/utils/vars';
+import {
+  cacheKeyPath,
+  configPath,
+  indexPath,
+  publicCacheKeyPath,
+  publicConfigPath,
+  sitePath,
+  useTimestamp,
+} from '@/utils/vars';
 
 checkSitePath();
 
@@ -19,15 +27,20 @@ function getScriptRegExp(src: string) {
 const digestDict: { [index: string]: string } = {};
 
 (async () => {
-  for await (const filePath of getFiles(sitePath)) {
-    if (!/\.(md|js|css)$/.test(filePath)) {
-      continue;
+  let cacheKeyData = 'cacheKey = ';
+  if (useTimestamp) {
+    cacheKeyData += `'t=${new Date().getTime()}';`;
+  } else {
+    for await (const filePath of getFiles(sitePath)) {
+      if (!/\.(md|js|css)$/.test(filePath)) {
+        continue;
+      }
+      const path = filePath.substr(sitePath.length).replace(/\\/g, '/');
+      digestDict[path] = getDigest(fs.readFileSync(filePath));
     }
-    const path = filePath.substr(sitePath.length).replace(/\\/g, '/');
-    digestDict[path] = getDigest(fs.readFileSync(filePath));
+    // [The cost of parsing JSON](https://v8.dev/blog/cost-of-javascript-2019#json)
+    cacheKeyData += `JSON.parse('${JSON.stringify(digestDict)}')`;
   }
-  // [The cost of parsing JSON](https://v8.dev/blog/cost-of-javascript-2019#json)
-  const cacheKeyData = `cacheKey = JSON.parse('${JSON.stringify(digestDict)}')`;
   const cacheKeyDigest = getDigest(cacheKeyData);
   fs.writeFileSync(path.join(sitePath, cacheKeyPath), cacheKeyData);
 

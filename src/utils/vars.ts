@@ -13,6 +13,7 @@ export const indexFile = process.env.INDEX_FILE || '/index.md';
 export const excludeUsername = process.env.EXCLUDE_USERNAME ? process.env.EXCLUDE_USERNAME.split(',').map(username => {
   return username.trim();
 }).filter(username => username) : [];
+export const useTimestamp = !!process.env.USE_TIMESTAMP;
 
 let shortIndexPath = indexPath;
 if (indexPath === 'index.html') {
