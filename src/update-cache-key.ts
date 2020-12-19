@@ -24,12 +24,37 @@ function getDigest(data: BinaryLike) {
 }
 
 function getScriptRegExp(src: string) {
-  return new RegExp(`(<script\\s+src=["']${src}).*?(["']>)`);
+  return new RegExp(`(<script\\s+src="${src}).*?("\\s*>)`);
 }
 
-const digestDict: { [index: string]: string } = {};
+function getLinkRegExp(href: string) {
+  return new RegExp(`(<link\\s+href="${href}).*?("\\s+rel="preload"\\s+as="script"\\s*/?>)`);
+}
+
+function insertCacheKey(indexData: string, url: string, digest: string,
+                        configUrl: string, configDigest: string, isScript: boolean) {
+  let cacheKeyRegExp: RegExp;
+  let configRegExp: RegExp;
+  let htmlTag: string;
+  if (isScript) {
+    cacheKeyRegExp = getScriptRegExp(url);
+    configRegExp = getScriptRegExp(configUrl);
+    htmlTag = `<script src="${url}?${digest}"></script>`;
+  } else {
+    cacheKeyRegExp = getLinkRegExp(url);
+    configRegExp = getLinkRegExp(configUrl);
+    htmlTag = `<link href="${url}?${digest}" rel="preload" as="script">`;
+  }
+  indexData = indexData.replace(configRegExp, `$1?${configDigest}$2`);
+  if (cacheKeyRegExp.test(indexData)) {
+    return indexData.replace(cacheKeyRegExp, `$1?${digest}$2`);
+  }
+  const index = indexData.match(configRegExp)!.index!;
+  return indexData.substring(0, index) + htmlTag + indexData.substring(index);
+}
 
 (async () => {
+  const digestDict: { [index: string]: string } = {};
   let cacheKeyData = 'cacheKey = ';
   if (useTimestamp) {
     cacheKeyData += `'t=${new Date().getTime()}';`;
@@ -44,23 +69,15 @@ const digestDict: { [index: string]: string } = {};
     // [The cost of parsing JSON](https://v8.dev/blog/cost-of-javascript-2019#json)
     cacheKeyData += `JSON.parse('${JSON.stringify(digestDict)}')`;
   }
-  const cacheKeyDigest = getDigest(cacheKeyData);
   fs.writeFileSync(path.join(sitePath, cacheKeyPath), cacheKeyData);
 
   const absoluteIndexPath = path.join(sitePath, indexPath);
   let indexData = fs.readFileSync(absoluteIndexPath).toString();
-  const configDigest = getDigest(fs.readFileSync(path.join(sitePath, configPath)));
-  const configRegExp = getScriptRegExp(cdnUrl ? cdnConfigUrl : publicConfigPath);
-  indexData = indexData.replace(configRegExp, `$1?${configDigest}$2`);
   const cacheKeyUrl = cdnUrl ? cdnCacheKeyUrl : publicCacheKeyPath;
-  const cacheKeyRegExp = getScriptRegExp(cacheKeyUrl);
-  if (cacheKeyRegExp.test(indexData)) {
-    indexData = indexData.replace(cacheKeyRegExp, `$1?${cacheKeyDigest}$2`);
-  } else {
-    const index = indexData.match(configRegExp)!.index!;
-    const partA = indexData.substring(0, index);
-    const partB = indexData.substring(index);
-    indexData = `${partA}<script src="${cacheKeyUrl}?${cacheKeyDigest}"></script>${partB}`;
-  }
+  const cacheKeyDigest = getDigest(cacheKeyData);
+  const configUrl = cdnUrl ? cdnConfigUrl : publicConfigPath;
+  const configDigest = getDigest(fs.readFileSync(path.join(sitePath, configPath)));
+  indexData = insertCacheKey(indexData, cacheKeyUrl, cacheKeyDigest, configUrl, configDigest, true);
+  indexData = insertCacheKey(indexData, cacheKeyUrl, cacheKeyDigest, configUrl, configDigest, false);
   fs.writeFileSync(absoluteIndexPath, indexData);
 })();
