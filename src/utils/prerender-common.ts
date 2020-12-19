@@ -4,6 +4,8 @@ import puppeteer, { Browser, Page, Request } from 'puppeteer-core';
 import {
   assetsPath,
   cdnAssetsUrl,
+  cdnCacheKeyUrl,
+  cdnConfigUrl,
   cdnUrl,
   homePath,
   host,
@@ -68,7 +70,7 @@ export async function loadPage(page: Page, path: string) {
   await page.waitForSelector('.rendering', {
     hidden: true,
   });
-  return page.evaluate((publicPath: string, homePath: string, publicConfigPath: string, publicCacheKeyPath: string) => {
+  return page.evaluate((publicPath: string, homePath: string, configUrl: string, cacheKeyUrl: string) => {
     let html = '';
     const paths: string[] = [];
     if (document.querySelector('main.error')) {
@@ -112,12 +114,16 @@ export async function loadPage(page: Page, path: string) {
       }
       element.remove();
     });
-    const cacheKeyScript = document.querySelector(`script[src^="${publicCacheKeyPath}"]`);
-    if (cacheKeyScript) {
-      cacheKeyScript.setAttribute('src', publicCacheKeyPath);
-    }
-    const configScript = document.querySelector(`script[src^="${publicConfigPath}"]`)!;
-    configScript.setAttribute('src', publicConfigPath);
+    const cleanDigest = (src: string, isScript: boolean) => {
+      const htmlTag = document.querySelector(isScript ? `script[src^="${src}"]` : `link[href^="${src}"]`);
+      if (htmlTag) {
+        htmlTag.setAttribute(isScript ? 'src' : 'href', src);
+      }
+    };
+    cleanDigest(cacheKeyUrl, false);
+    cleanDigest(configUrl, false);
+    cleanDigest(cacheKeyUrl, true);
+    cleanDigest(configUrl, true);
     document.body.id = 'prerender';
     const documentElement = document.documentElement;
     documentElement.removeAttribute('style');
@@ -125,7 +131,7 @@ export async function loadPage(page: Page, path: string) {
     html = documentElement.outerHTML.replace('<html style="">', '<html>');
     html = html.replaceAll('<!---->', '').replaceAll(/(>)(?:\r?\n)+(<)/g, '$1$2');
     return { html, paths };
-  }, publicPath, homePath, publicConfigPath, publicCacheKeyPath);
+  }, publicPath, homePath, ...(cdnUrl ? [cdnConfigUrl, cdnCacheKeyUrl] : [publicConfigPath, publicCacheKeyPath]));
 }
 
 export async function beginTo(loadPages: (browser: Browser, paths: string[]) => Promise<void>) {
