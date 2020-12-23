@@ -127,7 +127,7 @@ export async function loadPage(page: Page, path: string) {
     documentElement.removeAttribute('style');
     // noinspection HtmlRequiredLangAttribute
     html = documentElement.outerHTML.replace('<html style="">', '<html>');
-    html = html.replaceAll('<!---->', '').replaceAll(/(>)(?:\r?\n)+(<)/g, '$1$2');
+    html = html.replaceAll(/<!--.*?-->/g, '').replaceAll(/(>)(?:\r?\n)+(<)/g, '$1$2');
     return { html, paths };
   }, publicPath, homePath, ...(cdnUrl ? [cdnConfigUrl, cdnCacheKeyUrl] : [publicConfigPath, publicCacheKeyPath]));
 }
