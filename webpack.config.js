@@ -13,6 +13,7 @@ module.exports = {
     'prerender-queue': './prerender-queue.ts',
     'prerender-recur': './prerender-recur.ts',
     'web-server': './web-server.ts',
+    'ws-client': './ws-client.ts',
     'clean-html': './clean-html.ts',
     'update-cache-key': './update-cache-key.ts',
     'update-date': './update-date.ts',
