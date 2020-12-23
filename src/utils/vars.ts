@@ -11,6 +11,7 @@ export const publicPath = process.env.PUBLIC_PATH || '/';
 export const indexPath = process.env.INDEX_PATH || '-/index.html';
 export const cdnUrl = process.env.CDN_URL || '';
 export const indexFile = process.env.INDEX_FILE || '/index.md';
+export const commonFile = process.env.COMMON_FILE || '/common.md';
 export const excludeUsername = process.env.EXCLUDE_USERNAME ? process.env.EXCLUDE_USERNAME.split(',').map(username => {
   return username.trim();
 }).filter(username => username) : [];
