@@ -24,11 +24,11 @@ function getDigest(data: BinaryLike) {
 }
 
 function getScriptRegExp(src: string) {
-  return new RegExp(`(<script\\s+src="${src}).*?("\\s*>)`);
+  return new RegExp(`(<script\\s+src="${src})(?:\\?\\S*?)?("\\s*>)`);
 }
 
 function getLinkRegExp(href: string) {
-  return new RegExp(`(<link\\s+href="${href}).*?("\\s+rel="preload"\\s+as="script"\\s*/?>)`);
+  return new RegExp(`(<link\\s+href="${href})(?:\\?\\S*?)?("\\s+rel="preload"\\s+as="script"\\s*/?>)`);
 }
 
 function insertCacheKey(indexData: string, url: string, digest: string,
