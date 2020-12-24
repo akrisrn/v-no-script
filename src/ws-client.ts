@@ -1,23 +1,19 @@
-(async () => {
-  await (async () => {
-    while (true) {
-      try {
-        // noinspection BadExpressionStatementJS
-        vno;
-        break;
-      } catch {
-        await new Promise(_ => setTimeout(_, 100));
-      }
-    }
-  })();
-  const listeningFiles = ['/common.md'];
+(() => {
   const statusElement = document.createElement('code');
   statusElement.style.fontWeight = 'bold';
   statusElement.innerText = 'Connecting...';
-  document.addEventListener(vno.enums.EEvent.rendered, () => {
+  document.addEventListener('articleCreated', () => {
     document.querySelector('#bar')!.append(statusElement);
+  });
+  let scrollY = 0;
+  document.addEventListener('htmlChanged', () => {
+    vno.element.scroll(scrollY, false);
+  });
+  document.addEventListener('rendered', () => {
+    scrollY = 0;
     vno.file.enableCache();
   });
+  const extraFiles = ['/common.md'];
   const maxCount = 5;
   let count = 0;
   const connect = () => {
@@ -46,7 +42,8 @@
           break;
         case 1:
           const path = response.data;
-          if ([vno.filePath, ...vno.homeSelf.links, ...listeningFiles].includes(path)) {
+          if ([vno.filePath, ...vno.homeSelf.links, ...extraFiles].includes(path)) {
+            scrollY = window.scrollY;
             vno.file.disableCache();
             vno.reload();
           }
