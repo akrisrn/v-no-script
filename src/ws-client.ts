@@ -21,8 +21,7 @@
     ws.onerror = () => ws.close();
     ws.onclose = () => {
       statusElement.style.backgroundColor = 'rgba(var(--danger-color),.1)';
-      count++;
-      if (count <= maxCount) {
+      if (++count <= maxCount) {
         statusElement.innerText = `Reconnecting...(${count}/${maxCount})`;
         setTimeout(() => connect(), 1000);
         return;
