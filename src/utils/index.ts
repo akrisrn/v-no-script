@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { assetsDir, sitePath } from '@/utils/vars';
+import { excludeDirs, sitePath } from '@/utils/vars';
 
 export function checkSitePath() {
   if (!sitePath) {
@@ -12,8 +12,6 @@ export function checkSitePath() {
 export function getRelative(filePath: string) {
   return path.relative(sitePath, filePath).replace(/\\/g, '/');
 }
-
-const excludeDirs = ['.git', '.github', assetsDir];
 
 export async function* getFiles(dirPath: string): AsyncGenerator<string> {
   for (const dirent of fs.readdirSync(dirPath, { withFileTypes: true })) {

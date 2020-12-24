@@ -16,6 +16,7 @@ export const indexPath = process.env.INDEX_PATH || '-/index.html';
 export const cdnUrl = process.env.CDN_URL || '';
 export const indexFile = process.env.INDEX_FILE || '/index.md';
 export const commonFile = process.env.COMMON_FILE || '/common.md';
+export const excludeDirs = getList(process.env.EXCLUDE_DIRS);
 export const excludeUsername = getList(process.env.EXCLUDE_USERNAME);
 export const useTimestamp = !!process.env.USE_TIMESTAMP;
 
@@ -37,3 +38,5 @@ export const cdnConfigUrl = cdnUrl + configPath;
 export const cacheKeyPath = `${assetsDir}/cacheKey.js`;
 export const publicCacheKeyPath = publicPath + cacheKeyPath;
 export const cdnCacheKeyUrl = cdnUrl + cacheKeyPath;
+
+['.git', 'node_modules', assetsDir].forEach(item => excludeDirs.push(item));
