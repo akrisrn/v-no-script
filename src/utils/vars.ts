@@ -2,6 +2,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+function getList(value?: string) {
+  return value ? value.split(',').map(item => item.trim()).filter(item => item) : [];
+}
+
 export const sitePath = process.env.SITE_PATH || '';
 export const outDir = process.env.OUT_DIR || sitePath || 'out';
 export const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
@@ -12,9 +16,7 @@ export const indexPath = process.env.INDEX_PATH || '-/index.html';
 export const cdnUrl = process.env.CDN_URL || '';
 export const indexFile = process.env.INDEX_FILE || '/index.md';
 export const commonFile = process.env.COMMON_FILE || '/common.md';
-export const excludeUsername = process.env.EXCLUDE_USERNAME ? process.env.EXCLUDE_USERNAME.split(',').map(username => {
-  return username.trim();
-}).filter(username => username) : [];
+export const excludeUsername = getList(process.env.EXCLUDE_USERNAME);
 export const useTimestamp = !!process.env.USE_TIMESTAMP;
 
 let shortIndexPath = indexPath;
