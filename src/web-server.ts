@@ -24,9 +24,6 @@ const server = http.createServer(app);
 
 if (!disableWS) {
   const wss = new WebSocket.Server({ server });
-  wss.on('connection', () => {
-    console.log(`Connected clients: ${wss.clients.size}`);
-  });
 
   const broadcast = (data: string) => {
     wss.clients.forEach(client => {
