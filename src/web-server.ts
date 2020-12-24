@@ -5,7 +5,7 @@ import http from 'http';
 import WebSocket from 'ws';
 import watch from 'node-watch';
 import { checkSitePath, getRelative } from '@/utils';
-import { commonFile, homePath, indexPath, localhost, port, publicPath, sitePath } from '@/utils/vars';
+import { commonFile, excludeDirs, homePath, indexPath, localhost, port, publicPath, sitePath } from '@/utils/vars';
 
 checkSitePath();
 
@@ -58,10 +58,12 @@ watch([absoluteIndexPath, clientCodePath], () => {
   broadcast(createResponse(EventType.refresh));
 });
 
+const excludeRegExp = new RegExp(`[/\\\\](${excludeDirs.join('|')})[/\\\\]`);
+
 watch(sitePath, {
   recursive: true,
   filter: (file, skip) => {
-    if (/\.git/.test(file)) {
+    if (excludeRegExp.test(file)) {
       return skip;
     }
     return /\.md$/.test(file);

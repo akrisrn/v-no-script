@@ -39,4 +39,4 @@ export const cacheKeyPath = `${assetsDir}/cacheKey.js`;
 export const publicCacheKeyPath = publicPath + cacheKeyPath;
 export const cdnCacheKeyUrl = cdnUrl + cacheKeyPath;
 
-['.git', 'node_modules', assetsDir].forEach(item => excludeDirs.push(item));
+['\\.git', 'node_modules', assetsDir].forEach(item => excludeDirs.push(item));

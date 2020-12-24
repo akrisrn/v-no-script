@@ -13,12 +13,14 @@ export function getRelative(filePath: string) {
   return path.relative(sitePath, filePath).replace(/\\/g, '/');
 }
 
+const excludeRegExp = new RegExp(`^(${excludeDirs.join('|')})$`);
+
 export async function* getFiles(dirPath: string): AsyncGenerator<string> {
   for (const dirent of fs.readdirSync(dirPath, { withFileTypes: true })) {
     const direntPath = path.join(dirPath, dirent.name);
     if (!dirent.isDirectory()) {
       yield direntPath;
-    } else if (!excludeDirs.includes(dirent.name)) {
+    } else if (!excludeRegExp.test(dirent.name)) {
       yield* getFiles(direntPath);
     }
   }
