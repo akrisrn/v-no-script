@@ -1,8 +1,6 @@
 declare namespace vno {
-  module enums {
-    enum EEvent {
-      rendered = 'rendered'
-    }
+  module element {
+    function scroll(height: number, isSmooth: boolean): void
   }
 
   module file {
