@@ -9,6 +9,10 @@ export function checkSitePath() {
   }
 }
 
+export function getRelative(filePath: string) {
+  return path.relative(sitePath, filePath).replace(/\\/g, '/');
+}
+
 const excludeDirs = ['.git', '.github', assetsDir];
 
 export async function* getFiles(dirPath: string): AsyncGenerator<string> {

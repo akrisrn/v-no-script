@@ -1,6 +1,6 @@
 import fs from 'fs';
 import spawn from 'cross-spawn';
-import { checkSitePath, getFiles } from '@/utils';
+import { checkSitePath, getFiles, getRelative } from '@/utils';
 import { excludeUsername, sitePath } from '@/utils/vars';
 
 checkSitePath();
@@ -29,7 +29,7 @@ type TFlags<T = [string, boolean]> = {
     if (!filePath.endsWith('.md')) {
       continue;
     }
-    const commits = getCommits(filePath.substr(sitePath.length + 1));
+    const commits = getCommits(getRelative(filePath));
     if (!commits) {
       continue;
     }

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto, { BinaryLike } from 'crypto';
-import { checkSitePath, getFiles } from '@/utils';
+import { checkSitePath, getFiles, getRelative } from '@/utils';
 import {
   cacheKeyPath,
   cdnCacheKeyUrl,
@@ -63,8 +63,7 @@ function insertCacheKey(indexData: string, url: string, digest: string,
       if (!/\.(md|js|css)$/.test(filePath)) {
         continue;
       }
-      const path = filePath.substr(sitePath.length).replace(/\\/g, '/');
-      digestDict[path] = getDigest(fs.readFileSync(filePath));
+      digestDict[`/${getRelative(filePath)}`] = getDigest(fs.readFileSync(filePath));
     }
     // [The cost of parsing JSON](https://v8.dev/blog/cost-of-javascript-2019#json)
     cacheKeyData += `JSON.parse('${JSON.stringify(digestDict)}')`;

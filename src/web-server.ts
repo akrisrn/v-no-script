@@ -4,7 +4,7 @@ import express from 'express';
 import http from 'http';
 import WebSocket from 'ws';
 import watch from 'node-watch';
-import { checkSitePath } from '@/utils';
+import { checkSitePath, getRelative } from '@/utils';
 import { commonFile, homePath, indexPath, localhost, port, publicPath, sitePath } from '@/utils/vars';
 
 checkSitePath();
@@ -68,7 +68,6 @@ watch(sitePath, {
   },
 }, (eventType, filePath) => {
   if (filePath) {
-    filePath = filePath.substr(sitePath.length).replace(/\\/g, '/');
-    broadcast(createResponse(EventType.reload, filePath));
+    broadcast(createResponse(EventType.reload, `/${getRelative(filePath)}`));
   }
 });
