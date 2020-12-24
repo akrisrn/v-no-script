@@ -1,4 +1,5 @@
 /.idea/
+/.local-chromium/
 /node_modules/
 /dist/
 /out/
