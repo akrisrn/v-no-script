@@ -19,6 +19,7 @@ export const commonFile = process.env.COMMON_FILE || '/common.md';
 export const excludeDirs = getList(process.env.EXCLUDE_DIRS);
 export const excludeUsername = getList(process.env.EXCLUDE_USERNAME);
 export const useTimestamp = !!process.env.USE_TIMESTAMP;
+export const onlyInGit = !!process.env.ONLY_IN_GIT;
 export const disableWS = !!process.env.DISABLE_WS;
 
 let shortIndexPath = indexPath;
