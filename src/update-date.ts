@@ -1,19 +1,8 @@
 import fs from 'fs';
-import spawn from 'cross-spawn';
-import { checkSitePath, getFiles, getRelative } from '@/utils';
+import { checkSitePath, getCommits, getFiles, getRelative } from '@/utils';
 import { excludeUsername, sitePath } from '@/utils/vars';
 
 checkSitePath();
-
-function getCommits(filePath: string) {
-  try {
-    return spawn.sync('git', ['log', '--format=%cn,%ct000,%h', filePath], {
-      cwd: sitePath,
-    }).stdout.toString().trim();
-  } catch (e) {
-    return '';
-  }
-}
 
 type TFlags<T = [string, boolean]> = {
   updated: T;

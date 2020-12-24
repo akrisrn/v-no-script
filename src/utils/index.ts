@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import spawn from 'cross-spawn';
 import { excludeDirs, sitePath } from '@/utils/vars';
 
 export function checkSitePath() {
@@ -23,5 +24,15 @@ export async function* getFiles(dirPath: string): AsyncGenerator<string> {
     } else if (!excludeRegExp.test(dirent.name)) {
       yield* getFiles(direntPath);
     }
+  }
+}
+
+export function getCommits(filePath: string) {
+  try {
+    return spawn.sync('git', ['log', '--format=%cn,%ct000,%h', filePath], {
+      cwd: sitePath,
+    }).stdout.toString().trim();
+  } catch (e) {
+    return '';
   }
 }
