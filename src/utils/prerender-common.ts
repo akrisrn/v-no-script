@@ -76,10 +76,10 @@ export async function loadPage(page: Page, path: string) {
     if (document.querySelector('main.error')) {
       return { html, paths };
     }
-    document.querySelectorAll<HTMLLinkElement>('a[href^="#/"]').forEach(a => {
+    document.querySelectorAll<HTMLAnchorElement>('a[href^="#/"]').forEach(a => {
       let href = a.getAttribute('href')!;
-      const indexOf = href.indexOf('?');
       let query = '';
+      const indexOf = href.indexOf('?');
       if (indexOf >= 0) {
         query = href.substr(indexOf);
         href = href.substr(0, indexOf);
@@ -92,7 +92,7 @@ export async function loadPage(page: Page, path: string) {
       paths.push(path);
     });
     if (homePath !== publicPath) {
-      document.querySelectorAll<HTMLLinkElement>(`a[href="${homePath}"]`).forEach(a => {
+      document.querySelectorAll<HTMLAnchorElement>(`a[href="${homePath}"]`).forEach(a => {
         a.href = publicPath;
       });
     }
@@ -112,11 +112,14 @@ export async function loadPage(page: Page, path: string) {
       }
       element.remove();
     });
-    const cleanDigest = (src: string, isScript: boolean) => {
-      const htmlTag = document.querySelector(isScript ? `script[src^="${src}"]` : `link[href^="${src}"]`);
-      if (htmlTag) {
-        htmlTag.setAttribute(isScript ? 'src' : 'href', src);
-      }
+    const cleanDigest = (url: string, isScript: boolean) => {
+      const elements = document.querySelectorAll(isScript ? `script[src^="${url}"]` : `link[href^="${url}"]`);
+      elements.forEach(element => {
+        const nextChar = element.getAttribute(isScript ? 'src' : 'href')![url.length];
+        if (nextChar && nextChar === '?') {
+          element.setAttribute(isScript ? 'src' : 'href', url);
+        }
+      });
     };
     cleanDigest(cacheKeyUrl, false);
     cleanDigest(configUrl, false);
@@ -126,8 +129,10 @@ export async function loadPage(page: Page, path: string) {
     const documentElement = document.documentElement;
     documentElement.removeAttribute('style');
     // noinspection HtmlRequiredLangAttribute
-    html = documentElement.outerHTML.replace('<html style="">', '<html>');
-    html = html.replaceAll(/<!--.*?-->/g, '').replaceAll(/(>)(?:\r?\n)+(<)/g, '$1$2');
+    html = documentElement.outerHTML
+      .replace('<html style="">', '<html>')
+      .replaceAll(/<!--.*?-->/g, '')
+      .replaceAll(/(>)(?:\r?\n)+(<)/g, '$1$2');
     return { html, paths };
   }, publicPath, homePath, ...(cdnUrl ? [cdnConfigUrl, cdnCacheKeyUrl] : [publicConfigPath, publicCacheKeyPath]));
 }
