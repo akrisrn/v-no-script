@@ -27,9 +27,14 @@ export async function* getFiles(dirPath: string): AsyncGenerator<string> {
   }
 }
 
-export function getCommits(filePath: string) {
+export function getCommits(filePath: string, onlyOne = false) {
   try {
-    return spawn.sync('git', ['log', '--format=%cn,%ct000,%h', filePath], {
+    const args = ['log', '--format=%cn,%ct000,%h'];
+    if (onlyOne) {
+      args.push('-1');
+    }
+    args.push(filePath);
+    return spawn.sync('git', args, {
       cwd: sitePath,
     }).stdout.toString().trim();
   } catch (e) {

@@ -65,7 +65,7 @@ function insertCacheKey(indexData: string, url: string, digest: string,
         continue;
       }
       const path = getRelative(filePath);
-      if (onlyInGit && !getCommits(path)) {
+      if (onlyInGit && !getCommits(path, true)) {
         continue;
       }
       digestDict[`/${path}`] = getDigest(fs.readFileSync(filePath));
