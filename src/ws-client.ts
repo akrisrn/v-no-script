@@ -41,7 +41,7 @@
           break;
         case 1:
           const path = response.data;
-          if ([vno.filePath, ...vno.homeSelf.links, ...extraFiles].includes(path)) {
+          if ([vno.filePath, ...vno.mainSelf.links, ...extraFiles].includes(path)) {
             scrollY = window.scrollY;
             vno.file.disableCache();
             vno.reload();

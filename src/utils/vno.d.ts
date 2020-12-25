@@ -9,7 +9,7 @@ declare namespace vno {
     function enableCache(): void
   }
 
-  namespace homeSelf {
+  namespace mainSelf {
     const links: string[];
   }
 
