@@ -7,6 +7,8 @@ declare namespace vno {
     function disableCache(): void
 
     function enableCache(): void
+
+    function getFile(path: string): Promise<any>
   }
 
   namespace mainSelf {

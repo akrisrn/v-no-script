@@ -3,7 +3,7 @@
   statusElement.style.fontWeight = 'bold';
   statusElement.innerText = 'Connecting...';
   document.addEventListener('articleCreated', () => {
-    document.querySelector('#bar')!.append(statusElement);
+    document.querySelector('#bar')?.append(statusElement);
   });
   let scrollY = 0;
   document.addEventListener('htmlChanged', () => {
@@ -45,6 +45,11 @@
             scrollY = window.scrollY;
             vno.file.disableCache();
             vno.reload();
+          } else {
+            vno.file.disableCache();
+            vno.file.getFile(path).then(() => {
+              vno.file.enableCache();
+            });
           }
           break;
       }
