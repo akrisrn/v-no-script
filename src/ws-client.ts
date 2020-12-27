@@ -14,7 +14,7 @@
     vno.file.enableCache();
   });
   const extraFiles = ['/common.md'];
-  const maxCount = 5;
+  const maxCount = 10;
   let count = 0;
   const connect = () => {
     const ws = new WebSocket('ws://localhost:3000');
