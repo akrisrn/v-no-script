@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 function getList(value?: string) {
-  return value ? value.split(',').map(item => item.trim()).filter(item => item) : [];
+  return value?.split(',').map(item => item.trim()).filter(item => item) ?? [];
 }
 
 export const sitePath = process.env.SITE_PATH || '';

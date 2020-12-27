@@ -49,17 +49,17 @@ type TFlags<T = [string, boolean]> = {
     const regexp = /^(@(\S+?):\s*)(.+?)(\s*)$/gm;
     let match = regexp.exec(fileData);
     while (match) {
+      let [match0, mark, flag, data, space] = match;
       const index = match.index;
-      let data = match[3];
-      const flagData = flags[match[2]];
+      const flagData = flags[flag];
       if (flagData !== undefined) {
         data = flagData[0];
         if (!flagData[1]) {
           flagData[1] = true;
         }
       }
-      newData += fileData.substring(start, index) + [match[1], data, match[4]].join('');
-      start = index + match[0].length;
+      newData += fileData.substring(start, index) + [mark, data, space].join('');
+      start = index + match0.length;
       match = regexp.exec(fileData);
     }
     let noFlag = false;
