@@ -7,6 +7,7 @@ import watch from 'node-watch';
 import { checkSitePath, getRelative } from '@/utils';
 import {
   commonFile,
+  configPath,
   disableWS,
   excludeDirs,
   homePath,
@@ -53,9 +54,17 @@ if (!disableWS) {
 
   const createResponse = (type: EventType, data: any = null) => JSON.stringify({ type, data });
 
-  watch([absoluteIndexPath, clientCodePath], () => {
-    indexData = getIndexData();
-    broadcast(createResponse(EventType.refresh));
+  watch([
+    absoluteIndexPath,
+    clientCodePath,
+    path.join(sitePath, configPath),
+  ], (eventType, filePath) => {
+    if (filePath) {
+      if (getRelative(filePath) !== configPath) {
+        indexData = getIndexData();
+      }
+      broadcast(createResponse(EventType.refresh));
+    }
   });
 
   const excludeRegExp = new RegExp(`[/\\\\](${excludeDirs.join('|')})[/\\\\]`);
