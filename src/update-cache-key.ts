@@ -3,6 +3,7 @@ import path from 'path';
 import crypto, { BinaryLike } from 'crypto';
 import { checkSitePath, getCommits, getFiles, getRelative } from '@/utils';
 import {
+  addDeployTime,
   cacheKeyPath,
   cdnCacheKeyUrl,
   cdnConfigUrl,
@@ -55,11 +56,12 @@ function insertCacheKey(indexData: string, url: string, digest: string,
 }
 
 (async () => {
-  const digestDict: { [index: string]: string } = {};
-  let cacheKeyData = 'cacheKey = ';
+  const deployTime = new Date().getTime();
+  let cacheKeyData = 'cacheKey=';
   if (useTimestamp) {
-    cacheKeyData += `'t=${new Date().getTime()}';`;
+    cacheKeyData += `'t=${deployTime}';`;
   } else {
+    const digestDict: { [index: string]: string } = {};
     for await (const filePath of getFiles(sitePath)) {
       if (!/\.(md|js|css)$/.test(filePath)) {
         continue;
@@ -71,7 +73,10 @@ function insertCacheKey(indexData: string, url: string, digest: string,
       digestDict[`/${path}`] = getDigest(fs.readFileSync(filePath));
     }
     // [The cost of parsing JSON](https://v8.dev/blog/cost-of-javascript-2019#json)
-    cacheKeyData += `JSON.parse('${JSON.stringify(digestDict)}')`;
+    cacheKeyData += `JSON.parse('${JSON.stringify(digestDict)}');`;
+  }
+  if (addDeployTime) {
+    cacheKeyData += `deployTime=${deployTime};`;
   }
   fs.writeFileSync(path.join(sitePath, cacheKeyPath), cacheKeyData);
 

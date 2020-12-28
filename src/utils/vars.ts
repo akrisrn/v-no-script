@@ -18,6 +18,7 @@ export const indexFile = process.env.INDEX_FILE || '/index.md';
 export const commonFile = process.env.COMMON_FILE || '/common.md';
 export const excludeDirs = getList(process.env.EXCLUDE_DIRS);
 export const excludeUsername = getList(process.env.EXCLUDE_USERNAME);
+export const addDeployTime = !!process.env.ADD_DEPLOY_TIME;
 export const useTimestamp = !!process.env.USE_TIMESTAMP;
 export const onlyInGit = !!process.env.ONLY_IN_GIT;
 export const disableWS = !!process.env.DISABLE_WS;
