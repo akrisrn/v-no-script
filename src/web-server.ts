@@ -52,7 +52,7 @@ if (!disableWS) {
     reload
   }
 
-  const createResponse = (type: EventType, data: any = null) => JSON.stringify({ type, data });
+  const createResponse = (type: EventType, data: string | null = null) => JSON.stringify({ type, data });
 
   watch([
     absoluteIndexPath,
