@@ -1,8 +1,9 @@
 (() => {
   const statusElement = document.createElement('code');
+  statusElement.classList.add('item-ws-status');
   statusElement.style.fontWeight = 'bold';
   statusElement.innerText = 'Connecting...';
-  document.addEventListener('articleCreated', () => {
+  document.addEventListener('mainShown', () => {
     document.querySelector('#bar')?.append(statusElement);
   });
   let scrollY = 0;
@@ -41,15 +42,12 @@
           break;
         case 1:
           const path = response.data;
+          vno.file.disableCache();
           if ([vno.filePath, ...vno.mainSelf.links, ...extraFiles].includes(path)) {
             scrollY = window.scrollY;
-            vno.file.disableCache();
             vno.reload();
           } else {
-            vno.file.disableCache();
-            vno.file.getFile(path).then(() => {
-              vno.file.enableCache();
-            });
+            vno.file.getFile(path).then(() => vno.file.enableCache());
           }
           break;
       }
