@@ -103,6 +103,8 @@ export async function loadPage(page: Page, path: string) {
       '.heading-tag',
       '.heading-link',
       '.custom',
+      '#ws-client',
+      '.item-ws-status',
     ].join()).forEach(element => element.remove());
     document.querySelectorAll('.lds-ellipsis').forEach(element => {
       const nextElement = element.nextElementSibling!;
