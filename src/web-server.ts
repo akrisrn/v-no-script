@@ -1,3 +1,4 @@
+import os from 'os';
 import fs from 'fs';
 import path from 'path';
 import express from 'express';
@@ -34,15 +35,26 @@ if (!disableWS) {
     });
   };
 
+  let lanIp = '';
+  const interfaces = os.networkInterfaces();
+  for (const key of Object.keys(interfaces)) {
+    for (const net of interfaces[key] || []) {
+      if (!net.internal && net.family === 'IPv4') {
+        lanIp = net.address;
+        break;
+      }
+    }
+  }
+
   const absoluteIndexPath = path.join(sitePath, indexPath);
   const clientCodePath = path.join(__dirname, 'ws-client.js');
 
   const getIndexData = () => {
     const indexData = fs.readFileSync(absoluteIndexPath).toString();
     const clientCode = fs.readFileSync(clientCodePath).toString()
-      .replace(/(ws:\/\/localhost:)3000/, `$1${port}`)
+      .replace(/(?:ws:\/\/(localhost):)3000/, `ws://${lanIp || '$1'}:${port}`)
       .replace(/'\/common\.md'/, commonFile ? `'${commonFile}'` : '');
-    return indexData.replace(/(<\/body>)/, `<script>${clientCode}</script>$1`);
+    return indexData.replace(/(<\/body>)/, `<script id="ws-client">${clientCode}</script>$1`);
   };
 
   let indexData = getIndexData();
@@ -87,6 +99,6 @@ if (!disableWS) {
 }
 app.use(publicPath, express.static(sitePath));
 
-server.listen(port, 'localhost', () => {
+server.listen(port, () => {
   console.log(`Listening at ${localhost}${homePath}`);
 });
