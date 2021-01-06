@@ -4,16 +4,12 @@ import puppeteer, { Browser, Page, Request } from 'puppeteer-core';
 import {
   assetsPath,
   cdnAssetsUrl,
-  cdnCacheKeyUrl,
-  cdnConfigUrl,
   cdnUrl,
   homePath,
   host,
   indexFile,
   indexUrl,
   outDir,
-  publicCacheKeyPath,
-  publicConfigPath,
   publicPath,
 } from '@/utils/vars';
 
@@ -70,7 +66,7 @@ export async function loadPage(page: Page, path: string) {
   await page.waitForSelector('.rendering', {
     hidden: true,
   });
-  return page.evaluate((publicPath: string, homePath: string, configUrl: string, cacheKeyUrl: string) => {
+  return page.evaluate((publicPath: string, homePath: string) => {
     let html = '';
     const paths: string[] = [];
     if (document.querySelector('main.error')) {
@@ -102,6 +98,7 @@ export async function loadPage(page: Page, path: string) {
       '#backlinks > .icon',
       '.heading-tag',
       '.heading-link',
+      '.sync',
       '.custom',
       '#ws-client',
       '.item-ws-status',
@@ -114,19 +111,15 @@ export async function loadPage(page: Page, path: string) {
       }
       element.remove();
     });
-    const cleanDigest = (url: string, isScript: boolean) => {
-      const elements = document.querySelectorAll(isScript ? `script[src^="${url}"]` : `link[href^="${url}"]`);
-      elements.forEach(element => {
-        const nextChar = element.getAttribute(isScript ? 'src' : 'href')![url.length];
-        if (nextChar && nextChar === '?') {
-          element.setAttribute(isScript ? 'src' : 'href', url);
-        }
+    const cleanDigest = (isScript = true) => {
+      const attr = isScript ? 'src' : 'href';
+      document.querySelectorAll(isScript ? `script[src]` : `link[href]`).forEach(element => {
+        const src = element.getAttribute(attr)!;
+        element.setAttribute(attr, src.replace(/\?.*?$/, ''));
       });
     };
-    cleanDigest(cacheKeyUrl, false);
-    cleanDigest(configUrl, false);
-    cleanDigest(cacheKeyUrl, true);
-    cleanDigest(configUrl, true);
+    cleanDigest();
+    cleanDigest(false);
     document.body.id = 'prerender';
     const documentElement = document.documentElement;
     documentElement.removeAttribute('style');
@@ -136,7 +129,7 @@ export async function loadPage(page: Page, path: string) {
       .replaceAll(/<!--.*?-->/g, '')
       .replaceAll(/(>)(?:\r?\n)+(<)/g, '$1$2');
     return { html, paths };
-  }, publicPath, homePath, ...(cdnUrl ? [cdnConfigUrl, cdnCacheKeyUrl] : [publicConfigPath, publicCacheKeyPath]));
+  }, publicPath, homePath);
 }
 
 export async function beginTo(loadPages: (browser: Browser, paths: string[]) => Promise<void>) {
