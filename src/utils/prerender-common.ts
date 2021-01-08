@@ -73,19 +73,26 @@ export async function loadPage(page: Page, path: string) {
       return { html, paths };
     }
     document.querySelectorAll<HTMLAnchorElement>('a[href^="#/"]').forEach(a => {
-      let href = a.getAttribute('href')!;
+      let path = a.getAttribute('href')!.substr(1);
+      let anchor = '';
       let query = '';
-      const indexOf = href.indexOf('?');
+      let indexOf = path.indexOf('?');
       if (indexOf >= 0) {
-        query = href.substr(indexOf);
-        href = href.substr(0, indexOf);
+        query = path.substr(indexOf);
+        path = path.substr(0, indexOf);
       }
-      let path = href.substr(1);
+      indexOf = path.indexOf('#');
+      if (indexOf >= 0) {
+        anchor = path.substr(indexOf);
+        path = path.substr(0, indexOf);
+      }
       if (path.endsWith('/')) {
         path += 'index.md';
       }
-      a.href = publicPath + path.replace(/\.md$/, '.html').substr(1) + query;
-      paths.push(path);
+      if (path.endsWith('.md')) {
+        a.href = publicPath + path.replace(/\.md$/, '.html').substr(1) + anchor + query;
+        paths.push(path);
+      }
     });
     if (homePath !== publicPath) {
       document.querySelectorAll<HTMLAnchorElement>(`a[href="${homePath}"]`).forEach(a => {
