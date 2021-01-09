@@ -24,6 +24,15 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /ws-client\.ts$/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+          },
+        },
+        exclude: /node_modules/,
+      }, {
         test: /\.ts$/,
         use: 'ts-loader',
         exclude: /node_modules/,
