@@ -43,7 +43,7 @@
         case 1:
           const path = response.data;
           vno.file.disableCache();
-          if ([vno.filePath, ...vno.mainSelf.links, ...extraFiles].includes(path)) {
+          if ([vno.filePath, ...vno.mainSelf.links, ...extraFiles].map(decodeURI).includes(path)) {
             scrollY = window.scrollY;
             vno.reload();
           } else {
