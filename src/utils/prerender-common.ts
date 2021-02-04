@@ -99,6 +99,13 @@ export async function loadPage(page: Page, path: string) {
         a.href = publicPath;
       });
     }
+    document.querySelectorAll('pre').forEach(pre => {
+      const classList = Array.from(pre.classList).sort();
+      pre.removeAttribute('class');
+      classList.forEach(cls => {
+        pre.classList.add(cls);
+      });
+    });
     document.querySelectorAll([
       'a > svg',
       '#top > div > select',
