@@ -1,6 +1,7 @@
 declare let vnoConfig: IConfig;
 
 declare namespace vno {
+  const VPD: VPD;
   const Vue: Vue;
   const axios: typeof utils.axios;
   const dayjs: typeof utils.dayjs;
@@ -11,26 +12,38 @@ declare namespace vno {
   const renderMD: (path: string, data: string, asyncResults?: TAsyncResult[]) => Promise<string>;
   const updateDom: typeof markdown.updateDom;
 
+  const EFlag: typeof enums.EFlag;
+  const EMark: typeof enums.EMark;
+  const EEvent: typeof enums.EEvent;
+  const EIcon: typeof enums.EIcon;
+
   const destructors: typeof utils.destructors;
   const addInputBinds: typeof utils.addInputBinds;
+  const sleep: typeof utils.sleep;
   const waitFor: typeof utils.waitFor;
+  const waitForEvent: typeof utils.waitForEvent;
   const addEventListener: typeof utils.addEventListener;
   const callAndListen: typeof utils.callAndListen;
+  const encodeParam: typeof utils.encodeParam;
+  const getMessage: typeof utils.getMessage;
   const parseDate: typeof utils.parseDate;
   const formatDate: typeof utils.formatDate;
 
   const appSelf: App;
+  const mainSelf: Main;
   const articleSelf: Article;
   const gadgetSelf: Gadget;
-  const mainSelf: Main;
+
+  const selectConf: typeof appSelf.selectConf;
+
+  const title: typeof mainSelf.title;
+  const filePath: typeof mainSelf.filePath;
+  const reload: typeof mainSelf.reload;
 
   const toggleDark: typeof gadgetSelf.toggleDark;
   const toggleZen: typeof gadgetSelf.toggleZen;
   const toTop: typeof gadgetSelf.toTop;
   const toBottom: typeof gadgetSelf.toBottom;
-
-  const reload: typeof mainSelf.reload;
-  const filePath: typeof mainSelf.filePath;
 
   namespace file {
     function createErrorFile(path: string): IFile
@@ -56,11 +69,11 @@ declare namespace vno {
 
     function parseMD(data: string): Token[]
 
-    function renderMD(data: string): string
+    function renderMD(data: string, replaceMark = true): string
 
-    function updateAsyncScript(result: TAsyncResult): boolean
+    function updateAsyncScript(asyncResult: TAsyncResult): boolean
 
-    function replaceInlineScript(path: string, data: string, asyncResults?: TAsyncResult[]): string
+    function updateInlineScript(path: string, data: string, asyncResults?: TAsyncResult[], isSnippet = false): string
 
     function updateSnippet(data: string, updatedPaths: string[], asyncResults?: TAsyncResult[]): Promise<string>
 
@@ -130,6 +143,7 @@ declare namespace vno {
 
     enum EMark {
       redirect = 'redirect',
+      noCommon = 'noCommon',
       toc = 'toc',
       list = 'list',
       input = 'input',
@@ -215,6 +229,8 @@ declare namespace vno {
     function getMarkRegExp(mark: string, isLine = true, flags = 'im'): RegExp
 
     function getWrapRegExp(left: string, right = left, flags?: string): RegExp
+
+    function getParamRegExp(flags = 'g'): RegExp
   }
 
   namespace store {
@@ -238,7 +254,9 @@ declare namespace vno {
 
     function addInputBinds(binds: Dict<() => void>): void
 
-    function chopStr(str: string, sep: string, trim = true): [string, string | null]
+    function chopStr(str: string, sep: string, trim = true, last = false): [string, string | null]
+
+    function sleep(timeout: number): Promise<void>
 
     function trimList(list: string[], distinct = true): string[]
 
@@ -246,15 +264,21 @@ declare namespace vno {
 
     function stringifyAny(value: any): string
 
-    function evalFunction(evalStr: string, params: Dict<string>, asyncResults?: TAsyncResult[]): string
+    function evalFunction(evalStr: string, params: Dict<any>, asyncResults?: TAsyncResult[]): [string, boolean]
 
-    function replaceByRegExp(regexp: RegExp, data: string, callback: (matches: string[]) => string): string
+    function replaceByRegExp(regexp: RegExp, data: string, callback: (match: string[]) => string): string
 
     function waitFor(callback: () => void, maxCount = 100, timeout = 100): Promise<boolean>
+
+    function waitForEvent(callback: () => any, event: enums.EEvent, element: Document | Element = document): Promise<any>
 
     function addEventListener(element: Document | Element, type: string, listener: EventListenerOrEventListenerObject): void
 
     function callAndListen(callback: () => void, event: enums.EEvent, element: Document | Element = document, reside = true): void
+
+    function encodeParam(value: string): string
+
+    function getMessage(key: string, params: string[] | Dict<string>): string
 
     function parseDate(date: string | number): Date
 
@@ -298,6 +322,10 @@ declare class Article {
    * @Prop()
    */
   showTime: number;
+  /**
+   * @Prop()
+   */
+  redirectTo: (path: string, anchor?: string, query?: string) => boolean;
 
   markdownTs: typeof vno.markdown;
   startTime: number;
@@ -421,13 +449,19 @@ declare class Main {
 
   removeFlag(key: string): void
 
-  getBacklinks(): Promise<void>
+  redirectTo(path: string, anchor?: string, query?: string): boolean
+
+  loadBacklinks(): Promise<void>
 
   getListHtml(file: ISimpleFile): string
 
   getQueryTagLinks(tag: string): TAnchor[]
 
   returnHome(): void
+}
+
+interface IMessage {
+  [index: string]: string | IMessage
 }
 
 interface IConfig {
@@ -460,6 +494,8 @@ interface IConfig {
     noBacklinks: string;
     loading: string;
     redirectFrom: string;
+
+    [index: string]: string | IMessage;
   };
   defaultConf?: string;
   multiConf?: Dict<IConfig>;
@@ -527,7 +563,12 @@ type TFlag = [string, string]
 
 type TAnchor = [string, string]
 
-type TAsyncResult = [string, string]
+type TAsyncResult = [string, string, boolean?]
+
+/**
+ * vue-property-decorator/lib/index.d.ts
+ */
+type VPD = any
 
 /**
  * vue/types/vue.d.ts
