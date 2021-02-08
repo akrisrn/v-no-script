@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { assetsDir } from '@/utils/const';
 
 dotenv.config();
 
@@ -28,24 +29,5 @@ export const addDeployTime = !!process.env.ADD_DEPLOY_TIME;
 export const useTimestamp = !!process.env.USE_TIMESTAMP;
 export const onlyInGit = !!process.env.ONLY_IN_GIT;
 export const disableWS = !!process.env.DISABLE_WS;
-
-let shortIndexPath = indexPath;
-if (indexPath === 'index.html') {
-  shortIndexPath = '';
-} else if (indexPath.endsWith('/index.html')) {
-  shortIndexPath = indexPath.replace(/index\.html$/, '');
-}
-
-export const homePath = publicPath + shortIndexPath;
-export const indexUrl = host + homePath;
-export const assetsDir = 'assets';
-export const assetsPath = `${publicPath}${assetsDir}/`;
-export const cdnAssetsUrl = `${cdnUrl}${assetsDir}/`;
-export const configPath = `${assetsDir}/config.js`;
-export const publicConfigPath = publicPath + configPath;
-export const cdnConfigUrl = cdnUrl + configPath;
-export const cacheKeyPath = `${assetsDir}/cacheKey.js`;
-export const publicCacheKeyPath = publicPath + cacheKeyPath;
-export const cdnCacheKeyUrl = cdnUrl + cacheKeyPath;
 
 ['\\.git', 'node_modules', assetsDir].forEach(item => excludeDirs.push(item));

@@ -1,17 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 import puppeteer, { Browser, Page, Request } from 'puppeteer-core';
-import {
-  assetsPath,
-  cdnAssetsUrl,
-  cdnUrl,
-  homePath,
-  host,
-  indexFile,
-  indexUrl,
-  outDir,
-  publicPath,
-} from '@/utils/vars';
+import { cdnUrl, host, indexFile, outDir, publicPath } from '@/utils/env';
+import { assetsPath, cdnAssetsUrl, homePath, indexUrl } from '@/utils/path';
 
 let count = 0;
 

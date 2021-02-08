@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { checkSitePath, getFiles } from '@/utils';
-import { indexPath, sitePath } from '@/utils/vars';
+import { indexPath, sitePath } from '@/utils/env';
 
 checkSitePath();
 

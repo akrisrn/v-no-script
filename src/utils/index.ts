@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import spawn from 'cross-spawn';
-import { excludeDirs, sitePath } from '@/utils/vars';
+import { excludeDirs, sitePath } from '@/utils/env';
 
 export function checkSitePath() {
   if (!sitePath) {

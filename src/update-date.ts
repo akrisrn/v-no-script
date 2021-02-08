@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { checkSitePath, getCommits, getFiles, getRelative } from '@/utils';
-import { excludeUsername, sitePath } from '@/utils/vars';
+import { excludeUsername, sitePath } from '@/utils/env';
 
 checkSitePath();
 

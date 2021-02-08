@@ -2,20 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import crypto, { BinaryLike } from 'crypto';
 import { checkSitePath, getCommits, getFiles, getRelative } from '@/utils';
-import {
-  addDeployTime,
-  cacheKeyPath,
-  cdnCacheKeyUrl,
-  cdnConfigUrl,
-  cdnUrl,
-  configPath,
-  indexPath,
-  onlyInGit,
-  publicCacheKeyPath,
-  publicConfigPath,
-  sitePath,
-  useTimestamp,
-} from '@/utils/vars';
+import { cacheKeyPath, configPath } from '@/utils/const';
+import { addDeployTime, cdnUrl, indexPath, onlyInGit, sitePath, useTimestamp } from '@/utils/env';
+import { cdnCacheKeyUrl, cdnConfigUrl, publicCacheKeyPath, publicConfigPath } from '@/utils/path';
 
 checkSitePath();
 
