@@ -29,7 +29,7 @@ export async function* getFiles(dirPath: string): AsyncGenerator<string> {
 
 export function getCommits(filePath: string, onlyOne = false) {
   try {
-    const args = ['log', '--format=%an,%ct000,%h'];
+    const args = ['log', '--follow', '--format=%an,%ct000,%h'];
     if (onlyOne) {
       args.push('-1');
     }
