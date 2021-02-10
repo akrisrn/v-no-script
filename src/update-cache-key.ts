@@ -61,8 +61,7 @@ function insertCacheKey(indexData: string, url: string, digest: string,
       }
       digestDict[`/${path}`] = getDigest(fs.readFileSync(filePath));
     }
-    // [The cost of parsing JSON](https://v8.dev/blog/cost-of-javascript-2019#json)
-    cacheKeyData += `JSON.parse('${JSON.stringify(digestDict)}');`;
+    cacheKeyData += `${JSON.stringify(digestDict)};`;
   }
   if (addDeployTime) {
     cacheKeyData += `deployTime=${deployTime};`;
