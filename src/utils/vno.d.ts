@@ -1,3 +1,5 @@
+/* v1.2.7 */
+
 declare let vnoConfig: IConfig;
 
 declare namespace vno {
@@ -9,7 +11,7 @@ declare namespace vno {
 
   const version: string;
 
-  const renderMD: (path: string, data: string, asyncResults?: TAsyncResult[]) => Promise<string>;
+  const renderMD: (path: string, title: string, data: string, isSnippet = false, asyncResults?: TAsyncResult[]) => Promise<string>;
   const updateDom: typeof markdown.updateDom;
 
   const EFlag: typeof enums.EFlag;
@@ -73,7 +75,7 @@ declare namespace vno {
 
     function updateAsyncScript(asyncResult: TAsyncResult): boolean
 
-    function updateInlineScript(path: string, data: string, asyncResults?: TAsyncResult[], isSnippet = false): string
+    function updateInlineScript(path: string, title: string, data: string, isSnippet = false, asyncResults?: TAsyncResult[]): string
 
     function updateSnippet(data: string, updatedPaths: string[], asyncResults?: TAsyncResult[]): Promise<string>
 
@@ -146,6 +148,7 @@ declare namespace vno {
       noCommon = 'noCommon',
       toc = 'toc',
       list = 'list',
+      slice = 'slice',
       input = 'input',
       result = 'result',
       number = 'number',
@@ -222,13 +225,13 @@ declare namespace vno {
 
     function getLinkRegExp(startWithSlash = false, isImg = false, isLine = false, flags?: string): RegExp
 
-    function getSnippetRegExp(flags?: string): RegExp
-
-    function getAnchorRegExp(isLine = true, min = 2, max = 6, flags?: string): RegExp
+    function getWrapRegExp(left: string, right = left, flags?: string): RegExp
 
     function getMarkRegExp(mark: string, isLine = true, flags = 'im'): RegExp
 
-    function getWrapRegExp(left: string, right = left, flags?: string): RegExp
+    function getSnippetRegExp(flags?: string): RegExp
+
+    function getAnchorRegExp(isLine = true, min = 2, max = 6, flags?: string): RegExp
 
     function getParamRegExp(flags = 'g'): RegExp
   }
@@ -248,7 +251,6 @@ declare namespace vno {
     const dayjs: Dayjs;
 
     const definedFlags: enums.EFlag[];
-    const snippetMark: string;
     const destructors: (() => void)[];
     const inputBinds: Dict<() => void>;
 
@@ -266,7 +268,7 @@ declare namespace vno {
 
     function evalFunction(evalStr: string, params: Dict<any>, asyncResults?: TAsyncResult[]): [string, boolean]
 
-    function replaceByRegExp(regexp: RegExp, data: string, callback: (match: string[]) => string): string
+    function replaceByRegExp(regexp: RegExp, data: string, callback: (match: RegExpExecArray) => string): string
 
     function waitFor(callback: () => void, maxCount = 100, timeout = 100): Promise<boolean>
 
@@ -278,7 +280,7 @@ declare namespace vno {
 
     function encodeParam(value: string): string
 
-    function getMessage(key: string, params: string[] | Dict<string>): string
+    function getMessage(key: string, params: any[] | Dict<any>): string
 
     function parseDate(date: string | number): Date
 
@@ -314,6 +316,10 @@ declare class Article {
    * @Prop()
    */
   fileData: string;
+  /**
+   * @Prop()
+   */
+  title: string;
   /**
    * @Prop()
    */
