@@ -1,4 +1,4 @@
-/* v1.2.7 */
+/* v1.2.8 */
 
 declare let vnoConfig: IConfig;
 
@@ -40,7 +40,10 @@ declare namespace vno {
 
   const title: typeof mainSelf.title;
   const filePath: typeof mainSelf.filePath;
+  const isIndexFile: typeof mainSelf.isIndexFile;
   const reload: typeof mainSelf.reload;
+
+  const isSearchFile: typeof articleSelf.isSearchFile;
 
   const toggleDark: typeof gadgetSelf.toggleDark;
   const toggleZen: typeof gadgetSelf.toggleZen;
@@ -236,6 +239,14 @@ declare namespace vno {
     function getParamRegExp(flags = 'g'): RegExp
   }
 
+  namespace storage {
+    function getItem(key: string): string | null
+
+    function setItem(key: string, value: string): void
+
+    function removeItem(key: string): void
+  }
+
   namespace store {
     const state: {
       initing: boolean;
@@ -280,7 +291,7 @@ declare namespace vno {
 
     function encodeParam(value: string): string
 
-    function getMessage(key: string, params: any[] | Dict<any>): string
+    function getMessage(key: string, params?: TMessage): string
 
     function parseDate(date: string | number): Date
 
@@ -466,10 +477,6 @@ declare class Main {
   returnHome(): void
 }
 
-interface IMessage {
-  [index: string]: string | IMessage
-}
-
 interface IConfig {
   siteName?: string;
   dateFormat?: string;
@@ -501,13 +508,17 @@ interface IConfig {
     loading: string;
     redirectFrom: string;
 
-    [index: string]: string | IMessage;
+    [index: string]: TMessage;
   };
   defaultConf?: string;
   multiConf?: Dict<IConfig>;
   alias?: string;
 
   [index: string]: any;
+}
+
+interface IMessage {
+  [index: string]: TMessage
 }
 
 interface IFlags {
@@ -562,6 +573,10 @@ type THashPath = {
 }
 
 type TConfList = [string[], string[]]
+
+type TMessageData = string | number | boolean | null;
+
+type TMessage = TMessageData | TMessageData[] | IMessage
 
 type TRedirectList = [string[], string[]]
 
