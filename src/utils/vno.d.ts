@@ -1,4 +1,4 @@
-/* v1.2.8 */
+/* v1.2.9 */
 
 declare let vnoConfig: IConfig;
 
@@ -62,8 +62,8 @@ declare namespace vno {
     function getFile(path: string): Promise<IFile>
 
     function getFiles(): Promise<{
-      files: Dict<IFile>;
-      backlinks: Dict<string[]>;
+      files: Dict<IFile>
+      backlinks: Dict<string[]>
     }>
 
     function sortFiles(fileA: ISimpleFile, fileB: ISimpleFile): number
@@ -102,11 +102,11 @@ declare namespace vno {
 
     const baseFiles: string[];
     const shortBaseFiles: {
-      index: string;
-      readme: string;
-      archive: string;
-      category: string;
-      search: string;
+      index: string
+      readme: string
+      archive: string
+      category: string
+      search: string
     };
 
     const homeHash: string;
@@ -249,11 +249,11 @@ declare namespace vno {
 
   namespace store {
     const state: {
-      initing: boolean;
-      filePath: string;
-      anchor: string;
-      queryStr: string;
-      homePath: string;
+      initing: boolean
+      filePath: string
+      anchor: string
+      queryStr: string
+      homePath: string
     };
   }
 
@@ -300,7 +300,7 @@ declare namespace vno {
 }
 
 // noinspection JSUnusedGlobalSymbols
-declare class App {
+declare class App extends Vue {
   keyInput: string;
   selectConf: string;
 
@@ -318,11 +318,15 @@ declare class App {
 
   get favicon(): string
 
+  addLink(href: string, text = ''): TAnchor
+
+  removeLink(href: string): number
+
   returnHome(): void
 }
 
 // noinspection JSUnusedGlobalSymbols
-declare class Article {
+declare class Article extends Vue {
   /**
    * @Prop()
    */
@@ -365,13 +369,13 @@ declare class Article {
 
   updateRenderData(data = ''): Promise<void>
 
-  renderComplete(): void;
+  renderComplete(): void
 
-  scrollToAnchor(): void;
+  scrollToAnchor(): void
 }
 
 // noinspection JSUnusedGlobalSymbols
-declare class Gadget {
+declare class Gadget extends Vue {
   /**
    * @Prop()
    */
@@ -401,7 +405,7 @@ declare class Gadget {
 }
 
 // noinspection JSUnusedGlobalSymbols
-declare class Main {
+declare class Main extends Vue {
   fileTs: typeof vno.file | null;
 
   fileData: string;
@@ -462,9 +466,9 @@ declare class Main {
 
   setFlags(flags: IFlags): void
 
-  addFlag(key: string, value: string, sort = true): void
+  addFlag(key: string, value: string): TFlag
 
-  removeFlag(key: string): void
+  removeFlag(key: string): number
 
   redirectTo(path: string, anchor?: string, query?: string): boolean
 
@@ -478,43 +482,43 @@ declare class Main {
 }
 
 interface IConfig {
-  siteName?: string;
-  dateFormat?: string;
-  smartQuotes?: string | string[];
-  replacer?: [string, string][];
-  cdn?: string;
-  cacheKey?: string | Dict<string>;
+  siteName?: string
+  dateFormat?: string
+  smartQuotes?: string | string[]
+  replacer?: [string, string][]
+  cdn?: string
+  cacheKey?: string | Dict<string>
   paths: {
-    favicon?: string;
-    index: string;
-    readme: string;
-    archive: string;
-    category: string;
-    search: string;
-    common?: string;
-  };
+    favicon?: string
+    index: string
+    readme: string
+    archive: string
+    category: string
+    search: string
+    common?: string
+  }
   messages: {
-    home: string;
-    raw: string;
-    footnotes: string;
-    returnHome: string;
-    lastUpdated: string;
-    untagged: string;
-    pageError: string;
-    searching: string;
-    searchNothing: string;
-    showBacklinks: string;
-    noBacklinks: string;
-    loading: string;
-    redirectFrom: string;
+    home: string
+    raw: string
+    footnotes: string
+    returnHome: string
+    lastUpdated: string
+    untagged: string
+    pageError: string
+    searching: string
+    searchNothing: string
+    showBacklinks: string
+    noBacklinks: string
+    loading: string
+    redirectFrom: string
 
-    [index: string]: TMessage;
-  };
-  defaultConf?: string;
-  multiConf?: Dict<IConfig>;
-  alias?: string;
+    [index: string]: TMessage
+  }
+  defaultConf?: string
+  multiConf?: Dict<IConfig>
+  alias?: string
 
-  [index: string]: any;
+  [index: string]: any
 }
 
 interface IMessage {
@@ -522,69 +526,79 @@ interface IMessage {
 }
 
 interface IFlags {
-  title: string;
-  tags?: string[];
-  updated?: string[];
-  cover?: string;
-  times?: number[];
-  startDate?: string;
-  endDate?: string;
-  creator?: string;
-  updater?: string;
+  title: string
+  tags?: string[]
+  updated?: string[]
+  cover?: string
+  times?: number[]
+  startDate?: string
+  endDate?: string
+  creator?: string
+  updater?: string
 
-  [index: string]: string | string[] | number[] | undefined;
+  [index: string]: string | string[] | number[] | undefined
 }
 
 interface ISimpleFile {
-  path: string;
-  flags: IFlags;
-  isError?: boolean;
+  path: string
+  flags: IFlags
+  isError?: boolean
 }
 
 interface IFile extends ISimpleFile {
-  data: string;
-  links: Dict<TLink>;
+  data: string
+  links: Dict<TLink>
 }
 
 type Dict<T> = { [index: string]: T }
 
 type TLink = {
-  href: string;
-  texts: string[];
-  isMarkdown?: boolean;
-  isImage?: boolean;
-  isAnchor?: boolean;
-  isExternal?: boolean;
-  isError?: boolean;
+  href: string
+  texts: string[]
+  isMarkdown?: boolean
+  isImage?: boolean
+  isAnchor?: boolean
+  isExternal?: boolean
+  isError?: boolean
 }
 
 type TFileData = {
-  data: string;
-  flags: IFlags;
-  links: string[];
+  data: string
+  flags: IFlags
+  links: string[]
 }
 
 type TQuery = Dict<string | null>
 
 type THashPath = {
-  path: string;
-  anchor: string;
-  query: string;
+  path: string
+  anchor: string
+  query: string
 }
 
 type TConfList = [string[], string[]]
 
-type TMessageData = string | number | boolean | null;
+type TMessageData = string | number | boolean | null
 
 type TMessage = TMessageData | TMessageData[] | IMessage
 
 type TRedirectList = [string[], string[]]
 
-type TFlag = [string, string]
+type TFlag = {
+  key: string
+  value: string
+}
 
-type TAnchor = [string, string]
+type TAnchor = {
+  text: string
+  href: string
+}
 
-type TAsyncResult = [string, string, boolean?]
+type TAsyncResult = {
+  id: string
+  result: string
+  isError?: boolean
+}
 
 /**
  * vue-property-decorator/lib/index.d.ts
