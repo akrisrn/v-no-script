@@ -1,4 +1,4 @@
-/* v1.2.9 */
+/* v1.2.10 */
 
 declare let vnoConfig: IConfig;
 
@@ -300,9 +300,10 @@ declare namespace vno {
 }
 
 // noinspection JSUnusedGlobalSymbols
-declare class App extends Vue {
+declare class App extends vno.Vue {
   keyInput: string;
   selectConf: string;
+  otherLinks: TAnchor[];
 
   get initing(): typeof vno.store.state.initing
 
@@ -318,6 +319,8 @@ declare class App extends Vue {
 
   get favicon(): string
 
+  get iconExternal(): string
+
   addLink(href: string, text = ''): TAnchor
 
   removeLink(href: string): number
@@ -326,7 +329,7 @@ declare class App extends Vue {
 }
 
 // noinspection JSUnusedGlobalSymbols
-declare class Article extends Vue {
+declare class Article extends vno.Vue {
   /**
    * @Prop()
    */
@@ -375,7 +378,7 @@ declare class Article extends Vue {
 }
 
 // noinspection JSUnusedGlobalSymbols
-declare class Gadget extends Vue {
+declare class Gadget extends vno.Vue {
   /**
    * @Prop()
    */
@@ -405,7 +408,7 @@ declare class Gadget extends Vue {
 }
 
 // noinspection JSUnusedGlobalSymbols
-declare class Main extends Vue {
+declare class Main extends vno.Vue {
   fileTs: typeof vno.file | null;
 
   fileData: string;
@@ -592,6 +595,8 @@ type TFlag = {
 type TAnchor = {
   text: string
   href: string
+  isExternal?: boolean
+  isMarkdown?: boolean
 }
 
 type TAsyncResult = {
