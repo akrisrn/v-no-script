@@ -1,4 +1,4 @@
-/* v1.2.10 */
+/* v1.2.11 */
 
 declare let vnoConfig: IConfig;
 
@@ -562,7 +562,6 @@ type TLink = {
   isImage?: boolean
   isAnchor?: boolean
   isExternal?: boolean
-  isError?: boolean
 }
 
 type TFileData = {
