@@ -1,4 +1,4 @@
-/* v1.2.11 */
+/* v1.2.12 */
 
 declare let vnoConfig: IConfig;
 
@@ -275,19 +275,23 @@ declare namespace vno {
 
     function addCacheKey(path: string, needClean = true): string
 
+    function addCustomTag(href: string, reside: boolean, isScript: boolean): boolean
+
     function stringifyAny(value: any): string
+
+    function isolatedEval(str: string): any
 
     function evalFunction(evalStr: string, params: Dict<any>, asyncResults?: TAsyncResult[]): [string, boolean]
 
     function replaceByRegExp(regexp: RegExp, data: string, callback: (match: RegExpExecArray) => string): string
 
-    function waitFor(callback: () => void, maxCount = 100, timeout = 100): Promise<boolean>
+    function waitFor<T>(callback: () => T, maxCount = 100, timeout = 100): Promise<T | undefined>
 
-    function waitForEvent(callback: () => any, event: enums.EEvent, element: Document | Element = document): Promise<any>
+    function waitForEvent<T>(callback: () => T, event: enums.EEvent, element: Document | Element = document): Promise<T>
 
     function addEventListener(element: Document | Element, type: string, listener: EventListenerOrEventListenerObject): void
 
-    function callAndListen(callback: () => void, event: enums.EEvent, element: Document | Element = document, reside = true): void
+    function callAndListen(callback: () => void, event: enums.EEvent, element: Document | Element = document, reside = false): void
 
     function encodeParam(value: string): string
 
