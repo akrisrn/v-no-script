@@ -1,8 +1,8 @@
 /.idea/
+/*.iml
 /.local-chromium/
 /node_modules/
 /dist/
 /out/
-/*.iml
 /.env
 /.env.*
