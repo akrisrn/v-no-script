@@ -1,13 +1,13 @@
-/* v1.2.13 */
+/* v1.2.14 */
 
 declare let vnoConfig: IConfig;
 
 declare namespace vno {
   const VPD: VPD;
   const Vue: Vue;
-  const axios: typeof utils.axios;
-  const dayjs: typeof utils.dayjs;
+  const axios: typeof file.axios;
   const markdownIt: typeof markdown.markdownIt;
+  const dayjs: typeof utils.dayjs;
 
   const version: string;
 
@@ -51,6 +51,8 @@ declare namespace vno {
   const toBottom: typeof gadgetSelf.toBottom;
 
   namespace file {
+    const axios: axios;
+
     function createErrorFile(path: string): IFile
 
     function isCached(): boolean
@@ -258,7 +260,6 @@ declare namespace vno {
   }
 
   namespace utils {
-    const axios: axios;
     const dayjs: Dayjs;
 
     const definedFlags: enums.EFlag[];
@@ -488,12 +489,12 @@ declare class Main extends vno.Vue {
 }
 
 interface IConfig {
-  siteName?: string
-  dateFormat?: string
-  smartQuotes?: string | string[]
-  replacer?: [string, string][]
-  cdn?: string
-  cacheKey?: string | Dict<string>
+  siteName?: string;
+  dateFormat?: string;
+  smartQuotes?: string | string[];
+  replacer?: [string, string][];
+  cdn?: string;
+  cacheKey?: string | Dict<string>;
   paths: {
     favicon?: string
     index: string
@@ -502,7 +503,7 @@ interface IConfig {
     category: string
     search: string
     common?: string
-  }
+  };
   messages: {
     home: string
     raw: string
@@ -519,41 +520,41 @@ interface IConfig {
     redirectFrom: string
 
     [index: string]: TMessage
-  }
-  defaultConf?: string
-  multiConf?: Dict<IConfig>
-  alias?: string
+  };
+  defaultConf?: string;
+  multiConf?: Dict<IConfig>;
+  alias?: string;
 
-  [index: string]: any
+  [index: string]: any;
 }
 
 interface IMessage {
-  [index: string]: TMessage
+  [index: string]: TMessage;
 }
 
 interface IFlags {
-  title: string
-  tags?: string[]
-  updated?: string[]
-  cover?: string
-  times?: number[]
-  startDate?: string
-  endDate?: string
-  creator?: string
-  updater?: string
+  title: string;
+  tags?: string[];
+  updated?: string[];
+  cover?: string;
+  times?: number[];
+  startDate?: string;
+  endDate?: string;
+  creator?: string;
+  updater?: string;
 
-  [index: string]: string | string[] | number[] | undefined
+  [index: string]: string | string[] | number[] | undefined;
 }
 
 interface ISimpleFile {
-  path: string
-  flags: IFlags
-  isError?: boolean
+  path: string;
+  flags: IFlags;
+  isError?: boolean;
 }
 
 interface IFile extends ISimpleFile {
-  data: string
-  links: Dict<TLink>
+  data: string;
+  links: Dict<TLink>;
 }
 
 type Dict<T> = { [index: string]: T }
