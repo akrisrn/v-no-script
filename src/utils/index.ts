@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import watch from 'node-watch';
 import spawn from 'cross-spawn';
 import { excludeDirs, sitePath } from '@/utils/env';
 
@@ -30,6 +31,19 @@ export async function* getFiles(dirPath: string, match = /\.md$/,
       yield* getFiles(direntPath, match, exclude);
     }
   }
+}
+
+export function watchDir(dirPath: string, callback: (eventType?: 'update' | 'remove', filePath?: string) => any, recursive = true,
+                         match = /\.md$/, exclude = new RegExp(`[/\\\\](${excludeDirs.join('|')})[/\\\\]`)) {
+  return watch(dirPath, {
+    recursive,
+    filter: (file, skip) => {
+      if (exclude && exclude.test(file)) {
+        return skip;
+      }
+      return match ? match.test(file) : true;
+    },
+  }, callback);
 }
 
 export function getCommits(filePath: string, onlyOne = false) {

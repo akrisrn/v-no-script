@@ -5,9 +5,9 @@ import express from 'express';
 import http from 'http';
 import WebSocket from 'ws';
 import watch from 'node-watch';
-import { checkSitePath, getRelative } from '@/utils';
+import { checkSitePath, getRelative, watchDir } from '@/utils';
 import { configPath } from '@/utils/const';
-import { commonFile, disableWS, excludeDirs, indexPath, localhost, port, publicPath, sitePath } from '@/utils/env';
+import { commonFile, disableWS, indexPath, localhost, port, publicPath, sitePath } from '@/utils/env';
 import { homePath } from '@/utils/path';
 
 checkSitePath();
@@ -70,17 +70,7 @@ if (!disableWS) {
     }
   });
 
-  const excludeRegExp = new RegExp(`[/\\\\](${excludeDirs.join('|')})[/\\\\]`);
-
-  watch(sitePath, {
-    recursive: true,
-    filter: (file, skip) => {
-      if (excludeRegExp.test(file)) {
-        return skip;
-      }
-      return /\.md$/.test(file);
-    },
-  }, (eventType, filePath) => {
+  watchDir(sitePath, (eventType, filePath) => {
     if (filePath) {
       broadcast(createResponse(EventType.reload, `/${getRelative(filePath)}`));
     }
