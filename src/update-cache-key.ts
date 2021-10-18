@@ -51,10 +51,7 @@ function insertCacheKey(indexData: string, url: string, digest: string,
     cacheKeyData += `'t=${deployTime}';`;
   } else {
     const digestDict: { [index: string]: string } = {};
-    for await (const filePath of getFiles(sitePath)) {
-      if (!/\.(md|js|css)$/.test(filePath)) {
-        continue;
-      }
+    for await (const filePath of getFiles(sitePath, /\.(md|js|css)$/)) {
       const path = getRelative(filePath);
       if (onlyInGit && !getCommits(path, true)) {
         continue;

@@ -8,8 +8,8 @@ checkSitePath();
 const absoluteIndexPath = path.join(sitePath, indexPath);
 
 (async () => {
-  for await (const filePath of getFiles(sitePath)) {
-    if (filePath.endsWith('.html') && filePath !== absoluteIndexPath) {
+  for await (const filePath of getFiles(sitePath, /\.html$/)) {
+    if (filePath !== absoluteIndexPath) {
       fs.rmSync(filePath);
     }
   }

@@ -15,9 +15,6 @@ type TFlags<T = [string, boolean]> = {
 
 (async () => {
   for await (const filePath of getFiles(sitePath)) {
-    if (!filePath.endsWith('.md')) {
-      continue;
-    }
     const commits = getCommits(getRelative(filePath));
     if (!commits) {
       continue;
