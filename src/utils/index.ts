@@ -11,8 +11,8 @@ export function checkSitePath() {
   }
 }
 
-export function getRelative(filePath: string) {
-  return path.relative(sitePath, filePath).replace(/\\/g, '/');
+export function getRelative(filePath: string, rootPath = sitePath) {
+  return path.relative(rootPath, filePath).replace(/\\/g, '/');
 }
 
 export async function* getFiles(dirPath: string, match = /\.md$/,
