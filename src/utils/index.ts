@@ -4,9 +4,17 @@ import watch from 'node-watch';
 import spawn from 'cross-spawn';
 import { excludeDirs, sitePath } from '@/utils/env';
 
+export function log(message?: any, ...optionalParams: any[]) {
+  console.log(`[${new Date().toJSON()}]`, message, ...optionalParams);
+}
+
+export function error(message?: any, ...optionalParams: any[]) {
+  log('[error]', message, ...optionalParams);
+}
+
 export function checkSitePath() {
   if (!sitePath) {
-    console.error('error:', 'process.env.SITE_PATH is empty');
+    error('process.env.SITE_PATH is empty');
     process.exit(1);
   }
 }

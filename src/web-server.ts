@@ -5,7 +5,7 @@ import express from 'express';
 import http from 'http';
 import WebSocket from 'ws';
 import watch from 'node-watch';
-import { checkSitePath, getRelative, watchDir } from '@/utils';
+import { checkSitePath, getRelative, log, watchDir } from '@/utils';
 import { configPath } from '@/utils/const';
 import { commonFile, disableWS, indexPath, localhost, port, publicPath, sitePath } from '@/utils/env';
 import { homePath } from '@/utils/path';
@@ -19,6 +19,7 @@ if (!disableWS) {
   const wss = new WebSocket.Server({ server });
 
   const broadcast = (data: string) => {
+    log('broadcast', data);
     wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(data);
@@ -76,10 +77,13 @@ if (!disableWS) {
     }
   });
 
-  app.get(homePath, (request, response) => response.send(indexData));
+  app.get(homePath, (request, response) => {
+    log(`access ${homePath}`);
+    response.send(indexData);
+  });
 }
 app.use(publicPath, express.static(sitePath));
 
 server.listen(port, () => {
-  console.log(`Listening at ${localhost}${homePath}`);
+  log(`listening at ${localhost}${homePath}${(!disableWS ? ' and WebSocket enabled' : '')}`);
 });

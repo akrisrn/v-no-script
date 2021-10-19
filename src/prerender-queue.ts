@@ -1,4 +1,5 @@
 import { Browser } from 'puppeteer-core';
+import { error } from '@/utils';
 import { beginTo, loadPage, newPage, writeFile } from '@/utils/prerender-common';
 
 const loadedPaths: string[] = [];
@@ -11,7 +12,7 @@ async function loadPages(browser: Browser, paths: string[]) {
     loadedPaths.push(path);
     const { html, paths } = await loadPage(page, path);
     if (!html) {
-      console.error('error:', path);
+      error(path, 'is error page');
       path = queue.shift();
       continue;
     }

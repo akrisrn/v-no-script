@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import puppeteer, { Browser, Page, Request } from 'puppeteer-core';
+import { log } from '@/utils';
 import { cdnUrl, host, indexFile, outDir, publicPath } from '@/utils/env';
 import { assetsPath, cdnAssetsUrl, homePath, indexUrl } from '@/utils/path';
 
@@ -14,7 +15,7 @@ export function writeFile(filePath: string, html: string) {
       recursive: true,
     });
   }
-  console.log('write:', filePath);
+  log('write:', filePath);
   fs.writeFileSync(filePath, `<!DOCTYPE html>${html}`);
   count++;
 }
@@ -50,7 +51,7 @@ export async function newPage(browser: Browser) {
 
 export async function loadPage(page: Page, path: string) {
   const url = `${indexUrl}#${path}`;
-  console.log('load:', url);
+  log('load:', url);
   await page.goto(url);
   await page.waitForSelector('main:not(.slide-fade-enter-active)');
   await page.waitForSelector('article');
@@ -140,6 +141,6 @@ export async function loadPage(page: Page, path: string) {
 export async function beginTo(loadPages: (browser: Browser, paths: string[]) => Promise<void>) {
   const browser = await puppeteer.launch();
   await loadPages(browser, [indexFile]);
-  console.log(count, 'files were written');
+  log(count, 'files were written');
   await browser.close();
 }
