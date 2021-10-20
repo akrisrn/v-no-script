@@ -6,9 +6,8 @@ import http from 'http';
 import WebSocket from 'ws';
 import watch from 'node-watch';
 import { checkSitePath, getRelative, log, watchDir } from '@/utils';
-import { configPath } from '@/utils/const';
 import { commonFile, disableWS, indexPath, localhost, port, publicPath, sitePath } from '@/utils/env';
-import { homePath } from '@/utils/path';
+import { configPath, homePath } from '@/utils/path';
 
 checkSitePath();
 

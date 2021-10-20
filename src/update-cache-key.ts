@@ -2,9 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import crypto, { BinaryLike } from 'crypto';
 import { checkSitePath, getCommits, getFiles, getRelative } from '@/utils';
-import { cacheKeyPath, configPath } from '@/utils/const';
-import { addDeployTime, cdnUrl, indexPath, onlyInGit, sitePath, useTimestamp } from '@/utils/env';
-import { cdnCacheKeyUrl, cdnConfigUrl, publicCacheKeyPath, publicConfigPath } from '@/utils/path';
+import { assetsDir } from '@/utils/const';
+import { addDeployTime, cdnUrl, indexPath, onlyInGit, publicPath, sitePath, useTimestamp } from '@/utils/env';
+import { configPath } from '@/utils/path';
 
 checkSitePath();
 
@@ -43,6 +43,13 @@ function insertCacheKey(indexData: string, url: string, digest: string,
   const index = indexData.match(configRegExp)!.index!;
   return indexData.substring(0, index) + htmlTag + indexData.substring(index);
 }
+
+const publicConfigPath = publicPath + configPath;
+const cdnConfigUrl = cdnUrl + configPath;
+
+const cacheKeyPath = `${assetsDir}/cacheKey.js`;
+const publicCacheKeyPath = publicPath + cacheKeyPath;
+const cdnCacheKeyUrl = cdnUrl + cacheKeyPath;
 
 (async () => {
   const deployTime = new Date().getTime();
