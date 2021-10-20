@@ -29,5 +29,7 @@ export const addDeployTime = !!process.env.ADD_DEPLOY_TIME;
 export const useTimestamp = !!process.env.USE_TIMESTAMP;
 export const onlyInGit = !!process.env.ONLY_IN_GIT;
 export const disableWS = !!process.env.DISABLE_WS;
+export const pwDir = process.env.PW_DIR || 'PureWriter';
+export const pwBackupsPath = process.env.PW_BACKUPS_PATH || '';
 
 ['\\.git', 'node_modules', assetsDir].forEach(item => excludeDirs.push(item));
