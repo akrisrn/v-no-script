@@ -17,6 +17,7 @@ module.exports = {
     'clean-html': './clean-html.ts',
     'update-cache-key': './update-cache-key.ts',
     'update-date': './update-date.ts',
+    'pure-writer': './pure-writer.ts',
   },
   plugins: [
     new CleanWebpackPlugin(),

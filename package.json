@@ -11,7 +11,8 @@
     "web-server": "node dist/web-server.js",
     "clean-html": "node dist/clean-html.js",
     "update-cache-key": "node dist/update-cache-key.js",
-    "update-date": "node dist/update-date.js"
+    "update-date": "node dist/update-date.js",
+    "pure-writer": "node dist/pure-writer.js"
   },
   "dependencies": {
     "cross-spawn": "^7.0.3",

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper>
+    <select id="queryFolder">
+        select id,
+               name,
+               description as desc,
+               createdTime as created,
+               rank
+        from Folder
+        where deleted = 0
+        order by rank
+    </select>
+    <select id="queryCategory">
+        select id,
+               name,
+               description as desc,
+               createdTime as created,
+               rank
+        from Category
+        where folderId = @folderId
+        order by rank
+    </select>
+    <select id="queryArticle">
+        select id,
+               title,
+               content,
+               count,
+               createTime as created,
+               updateTime as updated,
+               rank
+        from Article
+        where folderId = @folderId
+        order by rank
+    </select>
+</mapper>
