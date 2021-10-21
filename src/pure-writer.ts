@@ -5,7 +5,8 @@ import sqlite3 from 'sqlite3';
 import { open, Statement } from 'sqlite';
 import { parse, validate } from 'fast-xml-parser';
 import { checkSitePath, error, getFiles, getRelative, log, watchDir } from '@/utils';
-import { pwBackupsPath, pwDir, sitePath } from '@/utils/env';
+import { pureWriter } from '@/utils/const';
+import { pwBackupsPath, pwDelay, pwDir, pwTag, sitePath } from '@/utils/env';
 
 checkSitePath();
 
@@ -173,14 +174,12 @@ async function writeData(dirPath: string, stmts: Statement[]) {
   fs.mkdirSync(dirPath, {
     recursive: true,
   });
-
-  const rootTag = 'PureWriter';
-  writeIndex(dirPath, `# PureWriter\n\n@tags: ${rootTag}\n\n`);
+  writeIndex(dirPath, `# ${pureWriter}\n\n@tags: ${pwTag}\n\n`);
 
   const [folderStmt, categoryStmt, articleStmt] = stmts;
   for (const folder of await folderStmt.all<PWFolder[]>()) {
-    const folderTag = `${rootTag}/${folder.name}`;
-    const folderPath = writeFolder(dirPath, folder, rootTag);
+    const folderTag = `${pwTag}/${folder.name}`;
+    const folderPath = writeFolder(dirPath, folder, pwTag);
 
     let categoryTag = folderTag;
     let categoryPath = folderPath;
@@ -228,7 +227,7 @@ const dirPath = path.join(sitePath, pwDir);
     sqlList.push(sql);
   }
 
-  for await (const filePath of yieldLatestBackup(pwBackupsPath, /\.pwb$/, 1000 * 60)) {
+  for await (const filePath of yieldLatestBackup(pwBackupsPath, /\.pwb$/, pwDelay)) {
     await unzipBackup(filePath, dbFilePath, /\.db$/);
     log('[db]', 'open', dbFilePath);
     const db = await open({

@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { assetsDir } from '@/utils/const';
+import { assetsDir, pureWriter } from '@/utils/const';
 
 dotenv.config();
 
@@ -29,7 +29,9 @@ export const addDeployTime = !!process.env.ADD_DEPLOY_TIME;
 export const useTimestamp = !!process.env.USE_TIMESTAMP;
 export const onlyInGit = !!process.env.ONLY_IN_GIT;
 export const disableWS = !!process.env.DISABLE_WS;
-export const pwDir = process.env.PW_DIR || 'PureWriter';
 export const pwBackupsPath = process.env.PW_BACKUPS_PATH || '';
+export const pwDir = process.env.PW_DIR || pureWriter;
+export const pwTag = process.env.PW_TAG || pureWriter;
+export const pwDelay = process.env.PW_DELAY ? parseInt(process.env.PW_DELAY) : 1000 * 60;
 
 ['\\.git', 'node_modules', assetsDir].forEach(item => excludeDirs.push(item));
