@@ -4,7 +4,7 @@ import unzipper from 'unzipper';
 import sqlite3 from 'sqlite3';
 import { open, Statement } from 'sqlite';
 import { parse, validate } from 'fast-xml-parser';
-import { checkSitePath, error, getFiles, getRelative, log, watchDir } from '@/utils';
+import { checkSitePath, error, getFiles, getRelative, log, runGit, watchDir } from '@/utils';
 import { PURE_WRITER } from '@/utils/const';
 import { PW_BACKUPS_PATH, PW_DELAY, PW_DIR, PW_TAG, SITE_PATH } from '@/utils/env';
 
@@ -241,5 +241,20 @@ const dirPath = path.join(SITE_PATH, PW_DIR);
     log('[db]', 'close', dbFilePath);
     await Promise.all(stmts.map(stmt => stmt.finalize()));
     await db.close();
+
+    [
+      ['add', '-A', '--ignore-errors', PW_DIR],
+      ['commit', '-m', `update ${PW_DIR} from ${getRelative(filePath, PW_BACKUPS_PATH)}`],
+    ].forEach(args => {
+      log('[git]', ...args);
+      try {
+        const err = runGit(args).err;
+        if (err) {
+          error(err);
+        }
+      } catch (err) {
+        error(err);
+      }
+    });
   }
 })();
