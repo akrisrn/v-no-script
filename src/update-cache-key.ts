@@ -73,7 +73,9 @@ const cdnCacheKeyUrl = cdnUrl + cacheKeyPath;
   fs.writeFileSync(path.join(sitePath, cacheKeyPath), cacheKeyData);
 
   const absoluteIndexPath = path.join(sitePath, indexPath);
-  let indexData = fs.readFileSync(absoluteIndexPath).toString();
+  let indexData = fs.readFileSync(absoluteIndexPath, {
+    encoding: 'utf-8',
+  });
   const cacheKeyUrl = cdnUrl ? cdnCacheKeyUrl : publicCacheKeyPath;
   const cacheKeyDigest = getDigest(cacheKeyData);
   const configUrl = cdnUrl ? cdnConfigUrl : publicConfigPath;

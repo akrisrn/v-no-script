@@ -43,7 +43,9 @@ interface PWArticle {
 
 function getSQLFromXML(filePath: string) {
   log('read', filePath);
-  const fileData = fs.readFileSync(filePath).toString();
+  const fileData = fs.readFileSync(filePath, {
+    encoding: 'utf-8',
+  });
   const valid = validate(fileData);
   if (valid !== true) {
     error('invalid XML file', valid.err);
@@ -124,7 +126,9 @@ function writeIndex(dirPath: string, data: string, overwrite = true) {
     fs.writeFileSync(indexPath, data);
     return indexPath;
   }
-  let indexData = fs.readFileSync(indexPath).toString();
+  let indexData = fs.readFileSync(indexPath, {
+    encoding: 'utf-8',
+  });
   if (indexData.endsWith('\n\n') && data.startsWith('\n')) {
     indexData = indexData.substr(0, indexData.length - 1);
   }

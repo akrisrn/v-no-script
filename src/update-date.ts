@@ -40,7 +40,9 @@ type TFlags<T = [string, boolean]> = {
       }
       flags.creator[0] = oldestName;
     }
-    let fileData = fs.readFileSync(filePath).toString();
+    let fileData = fs.readFileSync(filePath, {
+      encoding: 'utf-8',
+    });
     let newData = '';
     let start = 0;
     const regexp = /^(@(\S+?):\s*)(.+?)(\s*)$/gm;

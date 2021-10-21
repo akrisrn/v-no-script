@@ -41,9 +41,12 @@ if (!disableWS) {
   const clientCodePath = path.join(__dirname, 'ws-client.js');
 
   const getIndexData = () => {
-    const indexData = fs.readFileSync(absoluteIndexPath).toString();
-    const clientCode = fs.readFileSync(clientCodePath).toString()
-      .replace(/ws:\/\/(localhost):3000/, `ws://${lanIp || '$1'}:${port}`)
+    const indexData = fs.readFileSync(absoluteIndexPath, {
+      encoding: 'utf-8',
+    });
+    const clientCode = fs.readFileSync(clientCodePath, {
+      encoding: 'utf-8',
+    }).replace(/ws:\/\/(localhost):3000/, `ws://${lanIp || '$1'}:${port}`)
       .replace(/'\/common\.md'/, commonFile ? `'${commonFile}'` : '');
     return indexData.replace(/(<\/body>)/, `<script id="ws-client">${clientCode}</script>$1`);
   };

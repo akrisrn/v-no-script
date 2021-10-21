@@ -63,7 +63,8 @@ export function getCommits(filePath: string, onlyOne = false) {
     args.push(filePath);
     return spawn.sync('git', args, {
       cwd: sitePath,
-    }).stdout.toString().trim();
+      encoding: 'utf-8',
+    }).stdout.trim();
   } catch (e) {
     return '';
   }
