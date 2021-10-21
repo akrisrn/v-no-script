@@ -54,6 +54,19 @@ export function watchDir(dirPath: string, callback: (eventType?: 'update' | 'rem
   }, callback);
 }
 
+export function runGit(args: string[], cwd = SITE_PATH) {
+  const returns = spawn.sync('git', args, {
+    cwd, encoding: 'utf-8',
+  });
+  if (returns.error) {
+    throw returns.error;
+  }
+  return {
+    out: returns.stdout.trim(),
+    err: returns.stderr.trim(),
+  };
+}
+
 export function getCommits(filePath: string, onlyOne = false) {
   try {
     const args = ['log', '--follow', '--format=%an,%ct000,%h'];
@@ -61,11 +74,8 @@ export function getCommits(filePath: string, onlyOne = false) {
       args.push('-1');
     }
     args.push(filePath);
-    return spawn.sync('git', args, {
-      cwd: SITE_PATH,
-      encoding: 'utf-8',
-    }).stdout.trim();
-  } catch (e) {
-    return '';
+    return runGit(args).out;
+  } catch {
+    return;
   }
 }
