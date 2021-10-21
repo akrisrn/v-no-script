@@ -137,14 +137,19 @@ function writeIndex(dirPath: string, data: string, overwrite = true) {
   return indexPath;
 }
 
-function writeFolder(dirPath: string, folder: PWFolder, tag: string) {
+function writeFolder(dirPath: string, folder: PWFolder, tag: string, addToc = false) {
   const folderPath = path.join(dirPath, folder.id);
   log('mkdir', folderPath);
   fs.mkdirSync(folderPath, {
     recursive: true,
   });
-  const indexData = `# ${folder.name}\n\n@tags: ${tag}\n@updated: ${folder.created}\n\n` +
-    `${folder.desc ? `> ${folder.desc}\n\n` : ''}`;
+  let indexData = `# ${folder.name}\n\n@tags: ${tag}\n@updated: ${folder.created}\n\n`;
+  if (folder.desc) {
+    indexData += `> ${folder.desc}\n\n`;
+  }
+  if (addToc) {
+    indexData += '[toc]\n\n';
+  }
   const indexPath = writeIndex(folderPath, indexData);
   writeIndex(dirPath, `\n## [+](/${getRelative(indexPath)})\n`, false);
   return folderPath;
@@ -157,8 +162,11 @@ function writeArticle(dirPath: string, article: PWArticle, tag: string) {
   if (article.updated !== article.created) {
     times.push(article.updated);
   }
-  const fileData = `#${article.title ? ` ${article.title}` : ''}\n\n@tags: ${tag}\n` +
-    `@updated: ${times.join(', ')}\n@count: ${article.count}\n\n${article.content}`;
+  let fileData = '#';
+  if (article.title) {
+    fileData += ` ${article.title}`;
+  }
+  fileData += `\n\n@tags: ${tag}\n@updated: ${times.join(', ')}\n@count: ${article.count}\n\n${article.content}`;
   fs.writeFileSync(filePath, fileData);
   writeIndex(dirPath, `- [](/${getRelative(filePath)} "#")\n`, false);
 }
@@ -174,22 +182,21 @@ async function writeData(dirPath: string, stmts: Statement[]) {
   fs.mkdirSync(dirPath, {
     recursive: true,
   });
-  writeIndex(dirPath, `# ${PURE_WRITER}\n\n@tags: ${PW_TAG}\n\n`);
+  writeIndex(dirPath, `# ${PURE_WRITER}\n\n@tags: ${PW_TAG}\n\n[toc]\n\n`);
 
   const [folderStmt, categoryStmt, articleStmt] = stmts;
   for (const folder of await folderStmt.all<PWFolder[]>()) {
-    const folderTag = `${PW_TAG}/${folder.name}`;
-    const folderPath = writeFolder(dirPath, folder, PW_TAG);
-
-    let categoryTag = folderTag;
-    let categoryPath = folderPath;
-
     const categories = await categoryStmt.all<PWFolder[]>({
       '@folderId': folder.id,
     });
     let index = 0;
     let category = categories[index];
     let rank = categories.length !== 0 ? category.rank : Infinity;
+
+    const folderTag = `${PW_TAG}/${folder.name}`;
+    const folderPath = writeFolder(dirPath, folder, PW_TAG, categories.length !== 0);
+    let categoryTag = folderTag;
+    let categoryPath = folderPath;
 
     await articleStmt.each<PWArticle>({
       '@folderId': folder.id,
