@@ -24,8 +24,7 @@ function escapeRE(str: string) {
 export const SITE_PATH = process.env.SITE_PATH || '';
 export const OUT_DIR = process.env.OUT_DIR || SITE_PATH || 'out';
 export const PORT = getNum(process.env.PORT, 3000);
-export const LOCALHOST = `http://localhost${PORT !== 80 ? `:${PORT}` : ''}`;
-export const HOST = process.env.HOST || LOCALHOST;
+export const HOST = process.env.HOST || `http://localhost${PORT !== 80 ? `:${PORT}` : ''}`;
 export const PUBLIC_PATH = process.env.PUBLIC_PATH || '/';
 export const INDEX_PATH = process.env.INDEX_PATH || '-/index.html';
 export const CDN_URL = process.env.CDN_URL || '';

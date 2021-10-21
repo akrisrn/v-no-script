@@ -6,7 +6,7 @@ import http from 'http';
 import WebSocket from 'ws';
 import watch from 'node-watch';
 import { checkSitePath, getRelative, log, watchDir } from '@/utils';
-import { COMMON_FILE, DISABLE_WS, INDEX_PATH, LOCALHOST, PORT, PUBLIC_PATH, SITE_PATH } from '@/utils/env';
+import { COMMON_FILE, DISABLE_WS, INDEX_PATH, PORT, PUBLIC_PATH, SITE_PATH } from '@/utils/env';
 import { CONFIG_PATH, HOME_PATH } from '@/utils/path';
 
 checkSitePath();
@@ -86,6 +86,7 @@ if (!DISABLE_WS) {
 }
 app.use(PUBLIC_PATH, express.static(SITE_PATH));
 
+const localhost = `http://localhost${PORT !== 80 ? `:${PORT}` : ''}${HOME_PATH}`;
 server.listen(PORT, () => {
-  log(`listening at ${LOCALHOST}${HOME_PATH}${(!DISABLE_WS ? ' and WebSocket enabled' : '')}`);
+  log(`listening at ${localhost}`, 'and WebSocket', DISABLE_WS ? 'disabled' : 'enabled');
 });
