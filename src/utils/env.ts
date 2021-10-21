@@ -3,6 +3,14 @@ import { assetsDir, pureWriter } from '@/utils/const';
 
 dotenv.config();
 
+function getNum(value: string | undefined, defaultValue: number) {
+  if (!value) {
+    return defaultValue;
+  }
+  const num = parseInt(value);
+  return isNaN(num) ? defaultValue : num;
+}
+
 function getList(value?: string) {
   return value?.split(',').map(item => item.trim()).filter(item => item) ?? [];
 }
@@ -15,7 +23,7 @@ function escapeRE(str: string) {
 
 export const sitePath = process.env.SITE_PATH || '';
 export const outDir = process.env.OUT_DIR || sitePath || 'out';
-export const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+export const port = getNum(process.env.PORT, 3000);
 export const localhost = `http://localhost${port !== 80 ? `:${port}` : ''}`;
 export const host = process.env.HOST || localhost;
 export const publicPath = process.env.PUBLIC_PATH || '/';
@@ -32,6 +40,6 @@ export const disableWS = !!process.env.DISABLE_WS;
 export const pwBackupsPath = process.env.PW_BACKUPS_PATH || '';
 export const pwDir = process.env.PW_DIR || pureWriter;
 export const pwTag = process.env.PW_TAG || pureWriter;
-export const pwDelay = process.env.PW_DELAY ? parseInt(process.env.PW_DELAY) : 1000 * 60;
+export const pwDelay = getNum(process.env.PW_DELAY, 1000 * 60);
 
 ['\\.git', 'node_modules', assetsDir].forEach(item => excludeDirs.push(item));
