@@ -1,2 +1,2 @@
-export const assetsDir = 'assets';
-export const pureWriter = 'PureWriter';
+export const ASSETS_DIR = 'assets';
+export const PURE_WRITER = 'PureWriter';

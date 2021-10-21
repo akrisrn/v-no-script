@@ -2,18 +2,18 @@ import path from 'path';
 import fs from 'fs';
 import puppeteer, { Browser, Page, Request } from 'puppeteer-core';
 import { log } from '@/utils';
-import { assetsDir } from '@/utils/const';
-import { cdnUrl, host, indexFile, outDir, publicPath } from '@/utils/env';
-import { homePath } from '@/utils/path';
+import { ASSETS_DIR } from '@/utils/const';
+import { CDN_URL, HOST, INDEX_FILE, OUT_DIR, PUBLIC_PATH } from '@/utils/env';
+import { HOME_PATH } from '@/utils/path';
 
-const indexUrl = host + homePath;
-const assetsPath = `${publicPath}${assetsDir}/`;
-const cdnAssetsUrl = `${cdnUrl}${assetsDir}/`;
+const indexUrl = HOST + HOME_PATH;
+const assetsPath = `${PUBLIC_PATH}${ASSETS_DIR}/`;
+const cdnAssetsUrl = `${CDN_URL}${ASSETS_DIR}/`;
 
 let count = 0;
 
 export function writeFile(filePath: string, html: string) {
-  filePath = path.join(outDir, filePath);
+  filePath = path.join(OUT_DIR, filePath);
   const dirname = path.dirname(filePath);
   if (!fs.existsSync(dirname)) {
     fs.mkdirSync(dirname, {
@@ -34,11 +34,11 @@ function checkRequest(request: Request) {
     return false;
   }
   const urlStr = request.url();
-  if (cdnUrl) {
+  if (CDN_URL) {
     return urlStr.startsWith(cdnAssetsUrl);
   }
   const url = new URL(urlStr);
-  return url.origin === host && url.pathname.startsWith(assetsPath);
+  return url.origin === HOST && url.pathname.startsWith(assetsPath);
 }
 
 export async function newPage(browser: Browser) {
@@ -140,12 +140,12 @@ export async function loadPage(page: Page, path: string) {
       .replaceAll(/<!--.*?-->/g, '')
       .replaceAll(/(>)(?:\r?\n)+(<)/g, '$1$2');
     return { html, paths };
-  }, publicPath, homePath);
+  }, PUBLIC_PATH, HOME_PATH);
 }
 
 export async function beginTo(loadPages: (browser: Browser, paths: string[]) => Promise<void>) {
   const browser = await puppeteer.launch();
-  await loadPages(browser, [indexFile]);
+  await loadPages(browser, [INDEX_FILE]);
   log(count, 'files were written');
   await browser.close();
 }

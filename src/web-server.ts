@@ -6,15 +6,15 @@ import http from 'http';
 import WebSocket from 'ws';
 import watch from 'node-watch';
 import { checkSitePath, getRelative, log, watchDir } from '@/utils';
-import { commonFile, disableWS, indexPath, localhost, port, publicPath, sitePath } from '@/utils/env';
-import { configPath, homePath } from '@/utils/path';
+import { COMMON_FILE, DISABLE_WS, INDEX_PATH, LOCALHOST, PORT, PUBLIC_PATH, SITE_PATH } from '@/utils/env';
+import { CONFIG_PATH, HOME_PATH } from '@/utils/path';
 
 checkSitePath();
 
 const app = express();
 const server = http.createServer(app);
 
-if (!disableWS) {
+if (!DISABLE_WS) {
   const wss = new WebSocket.Server({ server });
 
   const broadcast = (data: string) => {
@@ -37,7 +37,7 @@ if (!disableWS) {
     }
   }
 
-  const absoluteIndexPath = path.join(sitePath, indexPath);
+  const absoluteIndexPath = path.join(SITE_PATH, INDEX_PATH);
   const clientCodePath = path.join(__dirname, 'ws-client.js');
 
   const getIndexData = () => {
@@ -46,8 +46,8 @@ if (!disableWS) {
     });
     const clientCode = fs.readFileSync(clientCodePath, {
       encoding: 'utf-8',
-    }).replace(/ws:\/\/(localhost):3000/, `ws://${lanIp || '$1'}:${port}`)
-      .replace(/'\/common\.md'/, commonFile ? `'${commonFile}'` : '');
+    }).replace(/ws:\/\/(localhost):3000/, `ws://${lanIp || '$1'}:${PORT}`)
+      .replace(/'\/common\.md'/, COMMON_FILE ? `'${COMMON_FILE}'` : '');
     return indexData.replace(/(<\/body>)/, `<script id="ws-client">${clientCode}</script>$1`);
   };
 
@@ -63,29 +63,29 @@ if (!disableWS) {
   watch([
     absoluteIndexPath,
     clientCodePath,
-    path.join(sitePath, configPath),
+    path.join(SITE_PATH, CONFIG_PATH),
   ], (eventType, filePath) => {
     if (filePath) {
-      if (getRelative(filePath) !== configPath) {
+      if (getRelative(filePath) !== CONFIG_PATH) {
         indexData = getIndexData();
       }
       broadcast(createResponse(EventType.refresh));
     }
   });
 
-  watchDir(sitePath, (eventType, filePath) => {
+  watchDir(SITE_PATH, (eventType, filePath) => {
     if (filePath) {
       broadcast(createResponse(EventType.reload, `/${getRelative(filePath)}`));
     }
   });
 
-  app.get(homePath, (request, response) => {
-    log(`access ${homePath}`);
+  app.get(HOME_PATH, (request, response) => {
+    log(`access ${HOME_PATH}`);
     response.send(indexData);
   });
 }
-app.use(publicPath, express.static(sitePath));
+app.use(PUBLIC_PATH, express.static(SITE_PATH));
 
-server.listen(port, () => {
-  log(`listening at ${localhost}${homePath}${(!disableWS ? ' and WebSocket enabled' : '')}`);
+server.listen(PORT, () => {
+  log(`listening at ${LOCALHOST}${HOME_PATH}${(!DISABLE_WS ? ' and WebSocket enabled' : '')}`);
 });

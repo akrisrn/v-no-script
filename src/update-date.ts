@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { checkSitePath, getCommits, getFiles, getRelative } from '@/utils';
-import { excludeUsername, sitePath } from '@/utils/env';
+import { EXCLUDE_USERNAME, SITE_PATH } from '@/utils/env';
 
 checkSitePath();
 
@@ -14,14 +14,14 @@ type TFlags<T = [string, boolean]> = {
 }
 
 (async () => {
-  for await (const filePath of getFiles(sitePath)) {
+  for await (const filePath of getFiles(SITE_PATH)) {
     const commits = getCommits(getRelative(filePath));
     if (!commits) {
       continue;
     }
     let commitList = commits.split('\n');
-    if (excludeUsername.length > 0) {
-      commitList = commitList.filter(commit => !excludeUsername.includes(commit.split(',')[0]));
+    if (EXCLUDE_USERNAME.length > 0) {
+      commitList = commitList.filter(commit => !EXCLUDE_USERNAME.includes(commit.split(',')[0]));
     }
     if (commitList.length === 0) {
       continue;

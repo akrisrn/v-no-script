@@ -2,9 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import crypto, { BinaryLike } from 'crypto';
 import { checkSitePath, getCommits, getFiles, getRelative } from '@/utils';
-import { assetsDir } from '@/utils/const';
-import { addDeployTime, cdnUrl, indexPath, onlyInGit, publicPath, sitePath, useTimestamp } from '@/utils/env';
-import { configPath } from '@/utils/path';
+import { ASSETS_DIR } from '@/utils/const';
+import { ADD_DEPLOY_TIME, CDN_URL, INDEX_PATH, ONLY_IN_GIT, PUBLIC_PATH, SITE_PATH, USE_TIMESTAMP } from '@/utils/env';
+import { CONFIG_PATH } from '@/utils/path';
 
 checkSitePath();
 
@@ -44,42 +44,42 @@ function insertCacheKey(indexData: string, url: string, digest: string,
   return indexData.substring(0, index) + htmlTag + indexData.substring(index);
 }
 
-const publicConfigPath = publicPath + configPath;
-const cdnConfigUrl = cdnUrl + configPath;
+const publicConfigPath = PUBLIC_PATH + CONFIG_PATH;
+const cdnConfigUrl = CDN_URL + CONFIG_PATH;
 
-const cacheKeyPath = `${assetsDir}/cacheKey.js`;
-const publicCacheKeyPath = publicPath + cacheKeyPath;
-const cdnCacheKeyUrl = cdnUrl + cacheKeyPath;
+const cacheKeyPath = `${ASSETS_DIR}/cacheKey.js`;
+const publicCacheKeyPath = PUBLIC_PATH + cacheKeyPath;
+const cdnCacheKeyUrl = CDN_URL + cacheKeyPath;
 
 (async () => {
   const deployTime = new Date().getTime();
   let cacheKeyData = 'cacheKey=';
-  if (useTimestamp) {
+  if (USE_TIMESTAMP) {
     cacheKeyData += `'t=${deployTime}';`;
   } else {
     const digestDict: { [index: string]: string } = {};
-    for await (const filePath of getFiles(sitePath, /\.(md|js|css)$/)) {
+    for await (const filePath of getFiles(SITE_PATH, /\.(md|js|css)$/)) {
       const path = getRelative(filePath);
-      if (onlyInGit && !getCommits(path, true)) {
+      if (ONLY_IN_GIT && !getCommits(path, true)) {
         continue;
       }
       digestDict[`/${path}`] = getDigest(fs.readFileSync(filePath));
     }
     cacheKeyData += `${JSON.stringify(digestDict)};`;
   }
-  if (addDeployTime) {
+  if (ADD_DEPLOY_TIME) {
     cacheKeyData += `deployTime=${deployTime};`;
   }
-  fs.writeFileSync(path.join(sitePath, cacheKeyPath), cacheKeyData);
+  fs.writeFileSync(path.join(SITE_PATH, cacheKeyPath), cacheKeyData);
 
-  const absoluteIndexPath = path.join(sitePath, indexPath);
+  const absoluteIndexPath = path.join(SITE_PATH, INDEX_PATH);
   let indexData = fs.readFileSync(absoluteIndexPath, {
     encoding: 'utf-8',
   });
-  const cacheKeyUrl = cdnUrl ? cdnCacheKeyUrl : publicCacheKeyPath;
+  const cacheKeyUrl = CDN_URL ? cdnCacheKeyUrl : publicCacheKeyPath;
   const cacheKeyDigest = getDigest(cacheKeyData);
-  const configUrl = cdnUrl ? cdnConfigUrl : publicConfigPath;
-  const configDigest = getDigest(fs.readFileSync(path.join(sitePath, configPath)));
+  const configUrl = CDN_URL ? cdnConfigUrl : publicConfigPath;
+  const configDigest = getDigest(fs.readFileSync(path.join(SITE_PATH, CONFIG_PATH)));
   indexData = insertCacheKey(indexData, cacheKeyUrl, cacheKeyDigest, configUrl, configDigest, true);
   indexData = insertCacheKey(indexData, cacheKeyUrl, cacheKeyDigest, configUrl, configDigest, false);
   fs.writeFileSync(absoluteIndexPath, indexData);

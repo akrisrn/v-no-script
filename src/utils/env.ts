@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { assetsDir, pureWriter } from '@/utils/const';
+import { ASSETS_DIR, PURE_WRITER } from '@/utils/const';
 
 dotenv.config();
 
@@ -21,25 +21,25 @@ function escapeRE(str: string) {
   return str.replace(REGEXP_ESCAPE_RE, '\\$&');
 }
 
-export const sitePath = process.env.SITE_PATH || '';
-export const outDir = process.env.OUT_DIR || sitePath || 'out';
-export const port = getNum(process.env.PORT, 3000);
-export const localhost = `http://localhost${port !== 80 ? `:${port}` : ''}`;
-export const host = process.env.HOST || localhost;
-export const publicPath = process.env.PUBLIC_PATH || '/';
-export const indexPath = process.env.INDEX_PATH || '-/index.html';
-export const cdnUrl = process.env.CDN_URL || '';
-export const indexFile = process.env.INDEX_FILE || '/index.md';
-export const commonFile = process.env.COMMON_FILE || '/common.md';
-export const excludeDirs = getList(process.env.EXCLUDE_DIRS).map(escapeRE);
-export const excludeUsername = getList(process.env.EXCLUDE_USERNAME);
-export const addDeployTime = !!process.env.ADD_DEPLOY_TIME;
-export const useTimestamp = !!process.env.USE_TIMESTAMP;
-export const onlyInGit = !!process.env.ONLY_IN_GIT;
-export const disableWS = !!process.env.DISABLE_WS;
-export const pwBackupsPath = process.env.PW_BACKUPS_PATH || '';
-export const pwDir = process.env.PW_DIR || pureWriter;
-export const pwTag = process.env.PW_TAG || pureWriter;
-export const pwDelay = getNum(process.env.PW_DELAY, 1000 * 60);
+export const SITE_PATH = process.env.SITE_PATH || '';
+export const OUT_DIR = process.env.OUT_DIR || SITE_PATH || 'out';
+export const PORT = getNum(process.env.PORT, 3000);
+export const LOCALHOST = `http://localhost${PORT !== 80 ? `:${PORT}` : ''}`;
+export const HOST = process.env.HOST || LOCALHOST;
+export const PUBLIC_PATH = process.env.PUBLIC_PATH || '/';
+export const INDEX_PATH = process.env.INDEX_PATH || '-/index.html';
+export const CDN_URL = process.env.CDN_URL || '';
+export const INDEX_FILE = process.env.INDEX_FILE || '/index.md';
+export const COMMON_FILE = process.env.COMMON_FILE || '/common.md';
+export const EXCLUDE_DIRS = getList(process.env.EXCLUDE_DIRS).map(escapeRE);
+export const EXCLUDE_USERNAME = getList(process.env.EXCLUDE_USERNAME);
+export const ADD_DEPLOY_TIME = !!process.env.ADD_DEPLOY_TIME;
+export const USE_TIMESTAMP = !!process.env.USE_TIMESTAMP;
+export const ONLY_IN_GIT = !!process.env.ONLY_IN_GIT;
+export const DISABLE_WS = !!process.env.DISABLE_WS;
+export const PW_BACKUPS_PATH = process.env.PW_BACKUPS_PATH || '';
+export const PW_DIR = process.env.PW_DIR || PURE_WRITER;
+export const PW_TAG = process.env.PW_TAG || PURE_WRITER;
+export const PW_DELAY = getNum(process.env.PW_DELAY, 1000 * 60);
 
-['\\.git', 'node_modules', assetsDir].forEach(item => excludeDirs.push(item));
+['\\.git', 'node_modules', ASSETS_DIR].forEach(item => EXCLUDE_DIRS.push(item));

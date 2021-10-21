@@ -1,11 +1,11 @@
-import { assetsDir } from '@/utils/const';
-import { indexPath, publicPath } from '@/utils/env';
+import { ASSETS_DIR } from '@/utils/const';
+import { INDEX_PATH, PUBLIC_PATH } from '@/utils/env';
 
-let shortIndexPath = indexPath;
-if (indexPath === 'index.html') {
+let shortIndexPath = INDEX_PATH;
+if (INDEX_PATH === 'index.html') {
   shortIndexPath = '';
-} else if (indexPath.endsWith('/index.html')) {
-  shortIndexPath = indexPath.replace(/index\.html$/, '');
+} else if (INDEX_PATH.endsWith('/index.html')) {
+  shortIndexPath = INDEX_PATH.replace(/index\.html$/, '');
 }
-export const homePath = publicPath + shortIndexPath;
-export const configPath = `${assetsDir}/config.js`;
+export const HOME_PATH = PUBLIC_PATH + shortIndexPath;
+export const CONFIG_PATH = `${ASSETS_DIR}/config.js`;

@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import watch from 'node-watch';
 import spawn from 'cross-spawn';
-import { excludeDirs, sitePath } from '@/utils/env';
+import { EXCLUDE_DIRS, SITE_PATH } from '@/utils/env';
 
 export function log(message?: any, ...optionalParams: any[]) {
   console.log(`[${new Date().toJSON()}]`, message, ...optionalParams);
@@ -13,18 +13,18 @@ export function error(message?: any, ...optionalParams: any[]) {
 }
 
 export function checkSitePath() {
-  if (!sitePath) {
+  if (!SITE_PATH) {
     error('process.env.SITE_PATH is empty');
     process.exit(1);
   }
 }
 
-export function getRelative(filePath: string, rootPath = sitePath) {
+export function getRelative(filePath: string, rootPath = SITE_PATH) {
   return path.relative(rootPath, filePath).replace(/\\/g, '/');
 }
 
 export async function* getFiles(dirPath: string, match = /\.md$/,
-                                exclude = new RegExp(`^(${excludeDirs.join('|')})$`)): AsyncGenerator<string> {
+                                exclude = new RegExp(`^(${EXCLUDE_DIRS.join('|')})$`)): AsyncGenerator<string> {
   for (const dirent of fs.readdirSync(dirPath, { withFileTypes: true })) {
     const direntPath = path.join(dirPath, dirent.name);
     if (!dirent.isDirectory()) {
@@ -42,7 +42,7 @@ export async function* getFiles(dirPath: string, match = /\.md$/,
 }
 
 export function watchDir(dirPath: string, callback: (eventType?: 'update' | 'remove', filePath?: string) => any, recursive = true,
-                         match = /\.md$/, exclude = new RegExp(`[/\\\\](${excludeDirs.join('|')})[/\\\\]`)) {
+                         match = /\.md$/, exclude = new RegExp(`[/\\\\](${EXCLUDE_DIRS.join('|')})[/\\\\]`)) {
   return watch(dirPath, {
     recursive,
     filter: (file, skip) => {
@@ -62,7 +62,7 @@ export function getCommits(filePath: string, onlyOne = false) {
     }
     args.push(filePath);
     return spawn.sync('git', args, {
-      cwd: sitePath,
+      cwd: SITE_PATH,
       encoding: 'utf-8',
     }).stdout.trim();
   } catch (e) {

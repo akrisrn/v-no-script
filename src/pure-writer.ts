@@ -5,12 +5,12 @@ import sqlite3 from 'sqlite3';
 import { open, Statement } from 'sqlite';
 import { parse, validate } from 'fast-xml-parser';
 import { checkSitePath, error, getFiles, getRelative, log, watchDir } from '@/utils';
-import { pureWriter } from '@/utils/const';
-import { pwBackupsPath, pwDelay, pwDir, pwTag, sitePath } from '@/utils/env';
+import { PURE_WRITER } from '@/utils/const';
+import { PW_BACKUPS_PATH, PW_DELAY, PW_DIR, PW_TAG, SITE_PATH } from '@/utils/env';
 
 checkSitePath();
 
-if (!pwBackupsPath) {
+if (!PW_BACKUPS_PATH) {
   error('process.env.PW_BACKUPS_PATH is empty');
   process.exit(1);
 }
@@ -174,12 +174,12 @@ async function writeData(dirPath: string, stmts: Statement[]) {
   fs.mkdirSync(dirPath, {
     recursive: true,
   });
-  writeIndex(dirPath, `# ${pureWriter}\n\n@tags: ${pwTag}\n\n`);
+  writeIndex(dirPath, `# ${PURE_WRITER}\n\n@tags: ${PW_TAG}\n\n`);
 
   const [folderStmt, categoryStmt, articleStmt] = stmts;
   for (const folder of await folderStmt.all<PWFolder[]>()) {
-    const folderTag = `${pwTag}/${folder.name}`;
-    const folderPath = writeFolder(dirPath, folder, pwTag);
+    const folderTag = `${PW_TAG}/${folder.name}`;
+    const folderPath = writeFolder(dirPath, folder, PW_TAG);
 
     let categoryTag = folderTag;
     let categoryPath = folderPath;
@@ -210,7 +210,7 @@ async function writeData(dirPath: string, stmts: Statement[]) {
 
 const xmlFilePath = path.join('./', 'pure-writer.xml');
 const dbFilePath = path.join('./dist', 'PureWriterBackup.db');
-const dirPath = path.join(sitePath, pwDir);
+const dirPath = path.join(SITE_PATH, PW_DIR);
 
 (async () => {
   const sqlDict = getSQLFromXML(xmlFilePath);
@@ -227,7 +227,7 @@ const dirPath = path.join(sitePath, pwDir);
     sqlList.push(sql);
   }
 
-  for await (const filePath of yieldLatestBackup(pwBackupsPath, /\.pwb$/, pwDelay)) {
+  for await (const filePath of yieldLatestBackup(PW_BACKUPS_PATH, /\.pwb$/, PW_DELAY)) {
     await unzipBackup(filePath, dbFilePath, /\.db$/);
     log('[db]', 'open', dbFilePath);
     const db = await open({
