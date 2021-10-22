@@ -26,7 +26,7 @@ export const OUT_DIR = process.env.OUT_DIR || SITE_PATH || 'out';
 export const PORT = getNum(process.env.PORT, 3000);
 export const HOST = process.env.HOST || `http://localhost${PORT !== 80 ? `:${PORT}` : ''}`;
 export const PUBLIC_PATH = process.env.PUBLIC_PATH || '/';
-export const INDEX_PATH = process.env.INDEX_PATH || '-/index.html';
+export const INDEX_PATH = process.env.INDEX_PATH || 'index.html';
 export const CDN_URL = process.env.CDN_URL || '';
 export const INDEX_FILE = process.env.INDEX_FILE || '/index.md';
 export const COMMON_FILE = process.env.COMMON_FILE || '/common.md';
