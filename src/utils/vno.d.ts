@@ -1,4 +1,4 @@
-/* v1.2.14 */
+/* v1.2.15 */
 
 declare let vnoConfig: IConfig;
 
@@ -36,6 +36,7 @@ declare namespace vno {
   const articleSelf: Article;
   const gadgetSelf: Gadget;
 
+  const conf: typeof config.config;
   const selectConf: typeof appSelf.selectConf;
 
   const title: typeof mainSelf.title;
@@ -315,7 +316,7 @@ declare class App extends vno.Vue {
 
   get homePath(): typeof vno.store.state.homePath
 
-  get config(): typeof vno.config.config
+  get conf(): typeof vno.config.config
 
   get confList(): typeof vno.config.confList
 
@@ -455,7 +456,7 @@ declare class Main extends vno.Vue {
 
   get query(): TQuery
 
-  get config(): typeof vno.config.config
+  get conf(): typeof vno.config.config
 
   get isIndexFile(): boolean
 
